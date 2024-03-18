@@ -22,9 +22,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "googleServicesFile": "./google-services.json",
-      "package": "com.example.myproject"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
