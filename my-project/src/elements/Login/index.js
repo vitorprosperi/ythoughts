@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button } from "react-native";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../../Firebase/FirebaseConnection";
 import { useNavigation } from '@react-navigation/native';
+import { auth } from "../../../Firebase/FirebaseConnection";
 
 export default function Form() {
   const [email, setEmail] = useState('');
