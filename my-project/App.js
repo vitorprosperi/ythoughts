@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Title from './src/elements/Title/';
 import Form from './src/elements/Login';
 import Home from './src/elements/Home';
 

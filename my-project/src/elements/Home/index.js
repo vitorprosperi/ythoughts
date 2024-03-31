@@ -6,10 +6,10 @@ import { auth } from "../../../Firebase/FirebaseConnection";
 export function Home(){
     const navigation = useNavigation();
 
-    const handleLogout = () => {
+    const signOut = () => {
         auth.signOut().then(() => {
             console.log("Usuário desconectado com sucesso!");
-            navigation.navigate('Login'); // Redirecionar para a tela de login
+            navigation.navigate('Login');
         }).catch((error) => {
             console.log("Erro ao desconectar o usuário:", error.message);
         });
@@ -18,7 +18,7 @@ export function Home(){
     return(
         <View>
             <Text>Vitor, Você Conseguiu!</Text>
-            <Button title="Sair" onPress={handleLogout} />
+            <Button title="Sair" onPress={signOut} />
         </View>
     );
 }
