@@ -14,7 +14,6 @@ export default function Form() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log('Usuário cadastrado com sucesso! \n' + userCredential.user.uid);
-      // Aqui você pode redirecionar o usuário para a próxima tela após o cadastro
     } catch (error) {
       console.log('Erro ao cadastrar usuário:', error.message);
     }
