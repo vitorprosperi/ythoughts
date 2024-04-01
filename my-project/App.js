@@ -4,20 +4,18 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Form from './src/elements/Login';
 import Home from './src/elements/Home';
-import { Begin } from './src/elements/Begin';
+import { Cadastro } from './src/elements/Cadastro';
 import { auth } from './Firebase/FirebaseConnection';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [initialRoute, setInitialRoute] = useState('Begin');
+  const [initialRoute, setInitialRoute] = useState('Login');
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
         setInitialRoute('Home');
-      } else {
-        setInitialRoute('Begin');
       }
     });
   
@@ -38,20 +36,11 @@ export default function App() {
           options={{ title: 'Home' }}
         />
         <Stack.Screen
-          name="Begin"
-          component={Begin}
-          options={{ title: 'Begin' }}
+          name="Cadastro"
+          component={Cadastro}
+          options={{ title: 'Cadastro' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
