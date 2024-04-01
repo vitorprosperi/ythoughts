@@ -10,7 +10,7 @@ import { auth } from './Firebase/FirebaseConnection';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [initialRoute, setInitialRoute] = useState('Login');
+  const [initialRoute, setInitialRoute] = useState('Begin');
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
