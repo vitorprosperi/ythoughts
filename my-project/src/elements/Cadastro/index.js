@@ -14,6 +14,11 @@ export function Cadastro() {
     const [password, setPassword] = useState('');
 
     const signUp = async () => {
+
+        if (!nome || !idade || !email || !password) {
+            Alert.alert('Todos os campos devem ser preenchidos.');
+            return;
+        }
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             console.log('Usuário cadastrado com sucesso! \n' + userCredential.user.uid);

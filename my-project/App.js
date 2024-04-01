@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Form from './src/elements/Login';
 import Home from './src/elements/Home';
 import { Cadastro } from './src/elements/Cadastro';
 import { auth } from './Firebase/FirebaseConnection';
+import { Questionario } from './src/elements/Questionario';
 
 const Stack = createNativeStackNavigator();
 

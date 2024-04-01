@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigation } from '@react-navigation/native';
 import { auth } from "../../../Firebase/FirebaseConnection";
@@ -15,11 +15,18 @@ export default function Form() {
   };
 
   async function signIn() {
+
+    if(!email || !password){
+      Alert.alert('Preencha Todos os Campos!');
+      return;
+    };
+
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       console.log('Usuário logado com sucesso! \n' + userCredential.user.uid);
       navigation.navigate('Home');
     } catch (error) {
+      Alert.alert('E-mail ou Senha incorretos.');
       console.log('Erro ao fazer login:', error.message);
     }
   };
