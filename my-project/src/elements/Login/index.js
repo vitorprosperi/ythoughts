@@ -24,7 +24,7 @@ export default function Form() {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       console.log('Usuário logado com sucesso! \n' + userCredential.user.uid);
-      navigation.navigate('Home');
+      navigation.navigate('Questionario');
     } catch (error) {
       Alert.alert('E-mail ou Senha incorretos.');
       console.log('Erro ao fazer login:', error.message);

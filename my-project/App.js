@@ -31,14 +31,19 @@ export default function App() {
           options={{ title: 'Login' }}
         />
         <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{ title: 'Home' }}
+          name="Questionario"
+          component={Questionario}
+          options={{ title: 'Questionario' }}
         />
         <Stack.Screen
           name="Cadastro"
           component={Cadastro}
           options={{ title: 'Cadastro' }}
+        />
+          <Stack.Screen
+          name="Home"
+          component={Home}
+          options={{ title: 'Home' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
