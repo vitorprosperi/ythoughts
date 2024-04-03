@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity} from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { db } from "../../../Firebase/FirebaseConnection";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, addDoc } from "firebase/firestore";
 
 export function Questionario() {
     const [perguntas, setPerguntas] = useState([]);
@@ -24,7 +24,6 @@ export function Questionario() {
     }, []);
 
     const handleRespostaChange = (perguntaIndex, opcaoIndex, resposta) => {
-        // Verifica se o estado de respostas está vazio antes de acessá-lo
         if (respostas.length === 0) {
             return;
         }
@@ -33,8 +32,20 @@ export function Questionario() {
         setRespostas(updatedRespostas);
     };
 
-    const enviarRespostas = () => {
-        console.log('Respostas enviadas:', respostas);
+    const enviarRespostasFirestore = async () => {
+        try {
+            // Itera sobre as respostas
+            respostas.forEach(async (resposta) => {
+                // Adiciona a resposta como um novo documento na coleção "respostas"
+                const docRef = await addDoc(collection(db, 'respostas'), {
+                    resposta: resposta, // Array com as opções selecionadas para essa pergunta
+                });
+                console.log('Resposta enviada com ID:', docRef.id);
+            });
+            console.log('Todas as respostas foram enviadas com sucesso!');
+        } catch (error) {
+            console.error('Erro ao enviar respostas:', error);
+        }
     };
 
     return (
@@ -86,14 +97,12 @@ export function Questionario() {
                     </View>
                 </View>
             ))}
-            <TouchableOpacity style={styles.buttonEnviar} onPress={enviarRespostas}>
+            <TouchableOpacity style={styles.buttonEnviar} onPress={enviarRespostasFirestore}>
                 <Text style={styles.buttonText}>Enviar Respostas</Text>
             </TouchableOpacity>
         </View>
     );
 }
-
-
 
 const styles = StyleSheet.create({
     container: {
