@@ -7,28 +7,27 @@ import { auth } from "../../../Firebase/FirebaseConnection";
 export default function Form() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
   const navigation = useNavigation();
 
-  function navigateCadastro() {
-    navigation.navigate('Cadastro');
-  };
-
   async function signIn() {
-
-    if(!email || !password){
+    if(!email || !password) {
       Alert.alert('Preencha Todos os Campos!');
       return;
-    };
+    }
 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log('Usuário logado com sucesso! \n' + userCredential.user.uid);
-      navigation.navigate('Questionario');
+      const user = userCredential.user;
+      console.log('Usuário logado com sucesso! UID:', user.uid);
+      navigation.navigate('Questionario', { userId: user.uid }); // Passa o UID do usuário para a tela do questionário
     } catch (error) {
       Alert.alert('E-mail ou Senha incorretos.');
       console.log('Erro ao fazer login:', error.message);
     }
+  }
+
+  function navigateCadastro() {
+    navigation.navigate('Cadastro');
   };
 
   return (

@@ -3,10 +3,14 @@ import { View, Text, StyleSheet, TouchableOpacity} from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { db } from "../../../Firebase/FirebaseConnection";
 import { collection, getDocs, addDoc } from "firebase/firestore";
+import { useRoute } from "@react-navigation/native";
+
 
 export function Questionario() {
     const [perguntas, setPerguntas] = useState([]);
     const [respostas, setRespostas] = useState([]);
+    const route = useRoute();
+    const {userID} = route.params;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -34,10 +38,19 @@ export function Questionario() {
 
     const enviarRespostasFirestore = async () => {
         try {
+            // Verifique se o usuário está autenticado
+            if (!user) {
+                console.error('Usuário não autenticado.');
+                return;
+            }
+
+            const userID = user.uid; // Obtenha o UID do usuário autenticado
+
             // Itera sobre as respostas
-            respostas.forEach(async (resposta) => {
-                // Adiciona a resposta como um novo documento na coleção "respostas"
+            respostas.forEach(async (resposta, index) => {
+                // Adiciona a resposta como um novo documento na coleção "respostas" com o UID do usuário
                 const docRef = await addDoc(collection(db, 'respostas'), {
+                    userID: userID, // Adicione o UID do usuário 
                     resposta: resposta, // Array com as opções selecionadas para essa pergunta
                 });
                 console.log('Resposta enviada com ID:', docRef.id);
@@ -67,7 +80,7 @@ export function Questionario() {
                             </TouchableOpacity>
                         ))}
                     </View>
-                    <Text>{perguntaIndex + 1}: {pergunta.perg2}</Text>
+                    <Text>{perguntaIndex + 2}: {pergunta.perg2}</Text>
                     <View style={styles.botaoContainer}>
                         {[...Array(10)].map((_, numero) => (
                             <TouchableOpacity
@@ -81,7 +94,7 @@ export function Questionario() {
                             </TouchableOpacity>
                         ))}
                     </View>
-                    <Text>{perguntaIndex + 1}: {pergunta.perg3}</Text>
+                    <Text>{perguntaIndex + 3}: {pergunta.perg3}</Text>
                     <View style={styles.botaoContainer}>
                         {[...Array(10)].map((_, numero) => (
                             <TouchableOpacity
