@@ -14,22 +14,27 @@ export function Cadastro() {
     const [password, setPassword] = useState('');
 
     const signUp = async () => {
-
         if (!nome || !idade || !email || !password) {
             Alert.alert('Todos os campos devem ser preenchidos.');
             return;
         }
+        
         try {
+            // Cadastrar usuário no Firebase Authentication
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            console.log('Usuário cadastrado com sucesso! \n' + userCredential.user.uid);
-
+            const userID = userCredential.user.uid; // Obter o UID do usuário cadastrado
+    
+            // Salvar informações do usuário no Firestore associadas ao UID
             await addDoc(collection(db, "usuarios"), {
+                userID: userID, // Associar as informações ao UID do usuário
                 nome: nome,
-                idade: idade
+                idade: idade,
+                email: email // Você pode adicionar mais informações, se necessário
             });
-            
+    
+            console.log("Usuário cadastrado com sucesso! UID:", userID);
             console.log("Dados enviados com sucesso para o Firestore!");
-            Alert.alert ('Cadastrado com sucesso!\nVoltando ao Login...');
+            Alert.alert('Cadastrado com sucesso!\nVoltando ao Login...');
             navigation.navigate('Login');
         } catch (error) {
             console.log('Erro ao cadastrar usuário:', error.message);

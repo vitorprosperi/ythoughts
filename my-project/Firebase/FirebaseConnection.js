@@ -1,7 +1,23 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "@firebase/firestore";
+import { useState, useEffect } from 'react';
 
+
+const useAuth = () => {
+  const [user, setUser] = useState(null);
+  const auth = getAuth();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, user => {
+      setUser(user);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  return user;
+};
 
 
 const firebaseConfig = {
@@ -18,4 +34,4 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-export {auth, db};
+export {auth, db, useAuth};

@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity} from "react-native";
-import { useNavigation } from '@react-navigation/native';
 import { db } from "../../../Firebase/FirebaseConnection";
 import { collection, getDocs, addDoc } from "firebase/firestore";
 import { useRoute } from "@react-navigation/native";
+import { useAuth } from "../../../Firebase/FirebaseConnection";
 
 
 export function Questionario() {
     const [perguntas, setPerguntas] = useState([]);
     const [respostas, setRespostas] = useState([]);
     const route = useRoute();
-    const {userID} = route.params;
+    const { user } = useAuth();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -48,12 +48,17 @@ export function Questionario() {
 
             // Itera sobre as respostas
             respostas.forEach(async (resposta, index) => {
-                // Adiciona a resposta como um novo documento na coleção "respostas" com o UID do usuário
-                const docRef = await addDoc(collection(db, 'respostas'), {
-                    userID: userID, // Adicione o UID do usuário 
-                    resposta: resposta, // Array com as opções selecionadas para essa pergunta
-                });
-                console.log('Resposta enviada com ID:', docRef.id);
+                try {
+                    // Adiciona a resposta como um novo documento na subcoleção "respostas" dentro do documento do usuário
+                    const userDocRef = doc(db, 'usuarios', userID);
+                    const respostasCollectionRef = collection(userDocRef, 'respostas');
+                    const docRef = await addDoc(respostasCollectionRef, {
+                        resposta: resposta, // Array com as opções selecionadas para essa pergunta
+                    });
+                    console.log('Resposta enviada com ID:', docRef.id);
+                } catch (error) {
+                    console.error('Erro ao enviar resposta:', error);
+                }
             });
             console.log('Todas as respostas foram enviadas com sucesso!');
         } catch (error) {
@@ -61,6 +66,9 @@ export function Questionario() {
         }
     };
 
+    const handleEnviarRespostas = () => {
+        enviarRespostasFirestore(); // Chame a função enviarRespostasFirestore aqui
+    };
     return (
         <View style={styles.container}>
             <Text>Antes de Começarmos, Algumas Perguntas Serão Feitas!</Text>

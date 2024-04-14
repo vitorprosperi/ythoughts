@@ -10,21 +10,26 @@ export default function Form() {
   const navigation = useNavigation();
 
   async function signIn() {
-    if(!email || !password) {
-      Alert.alert('Preencha Todos os Campos!');
-      return;
+    if (!email || !password) {
+        Alert.alert('Preencha Todos os Campos!');
+        return;
     }
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      console.log('Usuário logado com sucesso! UID:', user.uid);
-      navigation.navigate('Questionario', { userId: user.uid }); // Passa o UID do usuário para a tela do questionário
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        if (user) {
+            console.log('Usuário logado com sucesso! UID:', user.uid);
+            navigation.navigate('Questionario', { userId: user.uid });
+        } else {
+            console.error('O objeto user é nulo.');
+        }
     } catch (error) {
-      Alert.alert('E-mail ou Senha incorretos.');
-      console.log('Erro ao fazer login:', error.message);
+        Alert.alert('E-mail ou Senha incorretos.');
+        console.log('Erro ao fazer login:', error.message);
     }
-  }
+}
 
   function navigateCadastro() {
     navigation.navigate('Cadastro');
