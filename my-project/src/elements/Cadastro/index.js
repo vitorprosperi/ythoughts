@@ -3,7 +3,7 @@ import { View, Text, Button, TextInput, Alert, StyleSheet } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { auth } from "../../../Firebase/FirebaseConnection";
 import { db } from "../../../Firebase/FirebaseConnection";
-import { collection, addDoc } from "firebase/firestore";
+import { setDoc, doc} from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
 export function Cadastro() {
@@ -25,8 +25,7 @@ export function Cadastro() {
             const userID = userCredential.user.uid; // Obter o UID do usuário cadastrado
     
             // Salvar informações do usuário no Firestore associadas ao UID
-            await addDoc(collection(db, "usuarios"), {
-                userID: userID, // Associar as informações ao UID do usuário
+            await setDoc(doc(db, "usuarios", userID), {
                 nome: nome,
                 idade: idade,
                 email: email // Você pode adicionar mais informações, se necessário

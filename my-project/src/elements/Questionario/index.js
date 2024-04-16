@@ -4,6 +4,7 @@ import { db } from "../../../Firebase/FirebaseConnection";
 import { doc, collection, getDocs, addDoc } from "firebase/firestore";
 import { useRoute } from "@react-navigation/native";
 import { useAuth } from "../../../Firebase/FirebaseConnection";
+import { useNavigation } from "@react-navigation/native";
 
 
 
@@ -13,6 +14,7 @@ export function Questionario() {
     const route = useRoute();
     const uid = user ? user.uid : null;
     const { user } = useAuth();
+    const navigation = useNavigation();
     
 
     useEffect(() => {
@@ -61,6 +63,7 @@ export function Questionario() {
                         resposta: resposta, // Array com as opções selecionadas para essa pergunta
                     });
                     console.log('Resposta enviada com ID:', docRef.id);
+                    navigation.navigate('Home', { userId: user.uid });
                 } catch (error) {
                     console.error('Erro ao enviar resposta:', error);
                 }
