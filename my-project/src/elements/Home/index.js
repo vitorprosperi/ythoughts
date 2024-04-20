@@ -1,13 +1,49 @@
-import React from "react";
-import { View, Text, Button, Image, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from 'react';
+import { View, Text, Button, Image, StyleSheet, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { auth } from "../../../Firebase/FirebaseConnection";
+import { auth, db } from '../../../Firebase/FirebaseConnection';
+import { collection, doc, getDocs } from 'firebase/firestore';
 
-export default function Home(){
+export default function Home() {
     const navigation = useNavigation();
+    const [anotacoes, setAnotacoes] = useState([]);
+    const [refreshing, setRefreshing] = useState(false);
 
-    function abrirform(){
-       navigation.navigate('addform');
+    useEffect(() => {
+        fetchAnotacoes();
+    }, []);
+
+    const fetchAnotacoes = async () => {
+        try {
+            const user = auth.currentUser;
+            if (!user) {
+                console.error('Usuário não autenticado.');
+                return;
+            }
+
+            const userID = user.uid;
+            const userDocRef = doc(db, 'usuarios', userID);
+            const anotacoesCollectionRef = collection(userDocRef, 'anotacoes');
+            const querySnapshot = await getDocs(anotacoesCollectionRef);
+            const fetchedAnotacoes = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            setAnotacoes(fetchedAnotacoes);
+        } catch (error) {
+            console.error('Erro ao recuperar anotações:', error);
+        } finally {
+            setRefreshing(false);
+        }
+    };
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        fetchAnotacoes();
+    };
+
+    function abrirform() {
+        navigation.navigate('Addform');
     }
 
     const signOut = () => {
@@ -19,8 +55,16 @@ export default function Home(){
         });
     };
 
-    return(
-        <View>
+    return (
+        <ScrollView
+            style={styles.container}
+            refreshControl={
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                />
+            }
+        >
             <TouchableOpacity onPress={abrirform}>
                 <View style={styles.imageContainer}>
                     <Image
@@ -29,19 +73,24 @@ export default function Home(){
                     />
                 </View>
             </TouchableOpacity>
-            <View>    
-                <Text style={styles.text}>Vitor, Você Conseguiu!</Text>
+            <View>
+                {anotacoes.length === 0 ? (
+                    <Text style={styles.text}>Suas anotações serão exibidas aqui</Text>
+                ) : (
+                    <Text style={styles.text}>Suas anotações:</Text>
+                )}
+                {anotacoes.map(anotacao => (
+                    <Text key={anotacao.id}>{anotacao.anotacao}</Text>
+                ))}
                 <Button title="Sair" onPress={signOut} />
-            </View>    
-        </View>
+            </View>
+        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
     },
     imageContainer: {
         position: 'absolute',
@@ -57,4 +106,3 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
 });
-

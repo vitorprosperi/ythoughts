@@ -6,6 +6,7 @@ import Home from './src/elements/Home';
 import { Cadastro } from './src/elements/Cadastro';
 import { auth } from './Firebase/FirebaseConnection';
 import { Questionario } from './src/elements/Questionario';
+import { Addform } from './src/addform';
 
 const Stack = createNativeStackNavigator();
 
@@ -44,6 +45,11 @@ export default function App() {
           name="Home"
           component={Home}
           options={{ title: 'Home' }}
+        />
+        <Stack.Screen
+          name="Addform"
+          component={Addform}
+          options={{ title: 'Criar Anotação' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
