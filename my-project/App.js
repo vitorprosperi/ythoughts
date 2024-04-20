@@ -6,7 +6,7 @@ import Home from './src/elements/Home';
 import { Cadastro } from './src/elements/Cadastro';
 import { auth } from './Firebase/FirebaseConnection';
 import { Questionario } from './src/elements/Questionario';
-import { Addform } from './src/addform';
+import { Addform } from './src/Addform';
 
 const Stack = createNativeStackNavigator();
 
