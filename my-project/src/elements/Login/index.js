@@ -40,14 +40,24 @@ export default function Form() {
       Alert.alert('Preencha Todos os Campos!');
       return;
     }
-
+  
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-
+  
       if (user) {
         console.log('Usuário logado com sucesso! UID:', user.uid);
-        navigation.navigate('Questionario', { userId: user.uid });
+        const userID = user.uid;
+        const respostasCollectionRef = collection(db, 'usuarios', userID, 'respostas');
+        const respostasSnapshot = await getDocs(respostasCollectionRef);
+  
+        if (!respostasSnapshot.empty) {
+          // Se existem documentos na coleção de respostas, navegue para a tela "Home"
+          navigation.navigate('Home');
+        } else {
+          // Se não há documentos na coleção de respostas, navegue para a tela "Questionario"
+          navigation.navigate('Questionario', { userId: user.uid });
+        }
       } else {
         console.error('O objeto user é nulo.');
       }

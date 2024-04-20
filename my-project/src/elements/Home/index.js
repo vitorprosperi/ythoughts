@@ -1,9 +1,9 @@
 import React from "react";
-import { View, Text, Button } from "react-native";
+import { View, Text, Button, Image, StyleSheet } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { auth } from "../../../Firebase/FirebaseConnection";
 
-export function Home(){
+export default function Home(){
     const navigation = useNavigation();
 
     const signOut = () => {
@@ -17,10 +17,27 @@ export function Home(){
 
     return(
         <View>
+            <View style={styles.container} >
+                <Image
+                    source={require('../../../tcc/imagens/mais.png')}
+                    style={styles.image}
+                />
+             </View>   
             <Text>Vitor, Você Conseguiu!</Text>
             <Button title="Sair" onPress={signOut} />
         </View>
     );
 }
 
-export default Home;
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: 'flex-end', // Alinha os itens à direita
+        justifyContent: 'center', // Centraliza verticalmente
+        paddingRight: 20, // Espaçamento à direita para evitar que a imagem fique colada à borda
+    },
+    image: {
+        width: 35,
+        height: 35,
+    },
+});
