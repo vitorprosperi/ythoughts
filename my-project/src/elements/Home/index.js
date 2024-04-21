@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, Image, StyleSheet, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, Button, Image, StyleSheet, 
+    TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { auth, db } from '../../../Firebase/FirebaseConnection';
-import { collection, doc, getDocs } from 'firebase/firestore';
+import { collection, doc, getDocs, deleteDoc } from 'firebase/firestore';
+import CustomActionSheet from '../../CustomActionSheet'; // Importe o componente CustomActionSheet
 
 export default function Home() {
     const navigation = useNavigation();
     const [anotacoes, setAnotacoes] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
+    const [selectedAnotacaoId, setSelectedAnotacaoId] = useState(null); // Estado para controlar a anotação selecionada
+    const [actionSheetVisible, setActionSheetVisible] = useState(false); // Estado para controlar a visibilidade do menu de opções
 
     useEffect(() => {
         fetchAnotacoes();
@@ -59,6 +63,29 @@ export default function Home() {
         });
     };
 
+    const handleOptionsPress = (id) => {
+        setSelectedAnotacaoId(id); // Define a anotação selecionada
+        setActionSheetVisible(true); // Mostra o menu de opções
+    };
+
+    const handleActionSheetSelect = (index) => {
+        if (index === 0) {
+            handleDelete(selectedAnotacaoId);
+        }
+        setSelectedAnotacaoId(null); // Limpa a anotação selecionada
+        setActionSheetVisible(false); // Esconde o menu de opções
+    };
+
+    const handleDelete = async (id) => {
+        try {
+            await deleteDoc(doc(db, `usuarios/${auth.currentUser.uid}/anotacoes/${id}`));
+            fetchAnotacoes();
+            console.log('Anotação deletada com sucesso!');
+        } catch (error) {
+            console.error('Erro ao deletar anotação:', error);
+        }
+    };
+
     return (
         <ScrollView
             style={styles.container}
@@ -79,23 +106,35 @@ export default function Home() {
             </TouchableOpacity>
             <View>
                 {anotacoes.length === 0 ? (
-                    <Text style={styles.text}>Suas anotações serão exibidas aqui</Text>
+                    <Text style={styles.text}>Suas anotações serão exibidas aqui!</Text>
                 ) : (
                     <Text style={styles.text}>Suas anotações:</Text>
                 )}
                 {anotacoes.map(anotacao => (
-                    <TouchableOpacity 
-                        key={anotacao.id} 
-                        onPress={() => navigation.navigate('AcessarAnotacao', { anotacaoTexto: anotacao.anotacao, id: anotacao.id })}
-                     >
-                        <View style={styles.anotacaoContainer}>
-                             <Text style={styles.dataText}>{anotacao.data}</Text>
-                            <Text style={styles.anotacaoText}>{anotacao.anotacao}</Text>
+                    <View key={anotacao.id}>
+                        <View style={styles.dataContainer}>
+                            <Text style={styles.dataText}>{anotacao.data}</Text>
                         </View>
-                    </TouchableOpacity>
+                        <TouchableOpacity 
+                            onPress={() => navigation.navigate('AcessarAnotacao', { anotacaoTexto: anotacao.anotacao, id: anotacao.id })}
+                        >
+                            <View style={styles.anotacaoContainer}>
+                                <Text style={styles.anotacaoText}>{anotacao.anotacao}</Text>
+                                <TouchableOpacity onPress={() => handleOptionsPress(anotacao.id)}>
+                                    <Text style={styles.opcoesText}>...</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
                 ))}
                 <Button title="Sair" onPress={signOut} />
             </View>
+            <CustomActionSheet
+                visible={actionSheetVisible}
+                options={['Apagar', 'Cancelar']}
+                onSelect={handleActionSheetSelect}
+                onCancel={() => setActionSheetVisible(false)}
+            />
         </ScrollView>
     );
 }
@@ -124,11 +163,21 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         marginRight: 5,
         borderRadius: 5,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    opcoesText: {
+        fontSize: 20,
+        marginRight: 10,
     },
     anotacaoText: {
         fontSize: 16,
+        flex: 1, // Ocupa o restante do espaço horizontal disponível
     },
-    dataText: { // Estilo para a data
+    dataContainer: {
+        marginRight: 10,
+    },
+    dataText: {
         fontSize: 20,
         color: 'black',
         fontWeight: 'bold',
