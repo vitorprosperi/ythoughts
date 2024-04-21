@@ -29,6 +29,10 @@ export default function Home() {
                 id: doc.id,
                 ...doc.data()
             }));
+
+            // Ordena as anotações pela data de forma decrescente
+            fetchedAnotacoes.reverse();
+
             setAnotacoes(fetchedAnotacoes);
         } catch (error) {
             console.error('Erro ao recuperar anotações:', error);
@@ -80,7 +84,15 @@ export default function Home() {
                     <Text style={styles.text}>Suas anotações:</Text>
                 )}
                 {anotacoes.map(anotacao => (
-                    <Text key={anotacao.id}>{anotacao.anotacao}</Text>
+                    <TouchableOpacity 
+                        key={anotacao.id} 
+                        onPress={() => navigation.navigate('AcessarAnotacao', { anotacaoTexto: anotacao.anotacao, id: anotacao.id })}
+                     >
+                        <View style={styles.anotacaoContainer}>
+                             <Text style={styles.dataText}>{anotacao.data}</Text>
+                            <Text style={styles.anotacaoText}>{anotacao.anotacao}</Text>
+                        </View>
+                    </TouchableOpacity>
                 ))}
                 <Button title="Sair" onPress={signOut} />
             </View>
@@ -104,5 +116,21 @@ const styles = StyleSheet.create({
     text: {
         marginTop: 50,
         fontSize: 20,
+    },
+    anotacaoContainer: {
+        backgroundColor: '#AAE7F4',
+        padding: 10,
+        marginVertical: 5,
+        marginLeft: 5,
+        marginRight: 5,
+        borderRadius: 5,
+    },
+    anotacaoText: {
+        fontSize: 16,
+    },
+    dataText: { // Estilo para a data
+        fontSize: 20,
+        color: 'black',
+        fontWeight: 'bold',
     },
 });

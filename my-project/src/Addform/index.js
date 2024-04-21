@@ -7,6 +7,12 @@ import { useState } from "react";
 
 export function Addform(){
 
+    const dataAtual = new Date();
+    const dia = dataAtual.getDate();
+    const mes = dataAtual.getMonth() + 1; // Os meses são indexados de 0 a 11, então adicionamos 1 para obter o mês correto
+    const ano = dataAtual.getFullYear();
+    
+    const dataFormatada = `${dia}/${mes}/${ano}`;    
 const navigation = useNavigation();
     const [anotacao, setAnotacao] = useState(''); // Estado para armazenar a anotação digitada pelo usuário
 
@@ -28,6 +34,7 @@ const navigation = useNavigation();
             // Adiciona a anotação ao Firestore
             const docRef = await addDoc(anotacoesCollectionRef, {
                 anotacao: anotacao, // Conteúdo da anotação
+                data: dataFormatada
             });
             
             console.log('Anotação enviada com ID:', docRef.id);
