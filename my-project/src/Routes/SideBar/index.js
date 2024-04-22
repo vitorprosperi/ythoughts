@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { auth } from '../../Firebase/FirebaseConnection'; // Certifique-se de importar 'auth' do seu arquivo de configuração do Firebase
+import { auth } from '../../../Firebase/FirebaseConnection'; // Certifique-se de importar 'auth' do seu arquivo de configuração do Firebase
 
 const Sidebar = ({ navigation }) => {
     const signOut = () => {
