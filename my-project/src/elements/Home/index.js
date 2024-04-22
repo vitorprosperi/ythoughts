@@ -3,14 +3,15 @@ import { View, Text, Button, StyleSheet, TouchableOpacity, ScrollView, RefreshCo
 import { useNavigation } from '@react-navigation/native';
 import { auth, db } from '../../../Firebase/FirebaseConnection';
 import { collection, doc, getDocs, deleteDoc } from 'firebase/firestore';
-import { FontAwesome } from '@expo/vector-icons'; // Importe o ícone FontAwesome (ou outro ícone da sua biblioteca de ícones)
+import { FontAwesome } from '@expo/vector-icons';
+import CustomActionSheet from '../../CustomActionSheet';
 
 export default function Home() {
   const navigation = useNavigation();
   const [anotacoes, setAnotacoes] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [selectedAnotacaoId, setSelectedAnotacaoId] = useState(null); // Estado para controlar a anotação selecionada
-  const [actionSheetVisible, setActionSheetVisible] = useState(false); // Estado para controlar a visibilidade do menu de opções
+  const [selectedAnotacaoId, setSelectedAnotacaoId] = useState(null);
+  const [actionSheetVisible, setActionSheetVisible] = useState(false);
 
   useEffect(() => {
     fetchAnotacoes();
@@ -33,7 +34,6 @@ export default function Home() {
         ...doc.data()
       }));
 
-      // Ordena as anotações pela data de forma decrescente
       fetchedAnotacoes.reverse();
 
       setAnotacoes(fetchedAnotacoes);
@@ -54,16 +54,16 @@ export default function Home() {
   }
 
   const handleOptionsPress = (id) => {
-    setSelectedAnotacaoId(id); // Define a anotação selecionada
-    setActionSheetVisible(true); // Mostra o menu de opções
+    setSelectedAnotacaoId(id);
+    setActionSheetVisible(true);
   };
 
   const handleActionSheetSelect = (index) => {
     if (index === 0) {
       handleDelete(selectedAnotacaoId);
     }
-    setSelectedAnotacaoId(null); // Limpa a anotação selecionada
-    setActionSheetVisible(false); // Esconde o menu de opções
+    setSelectedAnotacaoId(null);
+    setActionSheetVisible(false);
   };
 
   const handleDelete = async (id) => {
@@ -111,8 +111,13 @@ export default function Home() {
             </TouchableOpacity>
           </View>
         ))}
-        
       </View>
+      <CustomActionSheet
+        visible={actionSheetVisible}
+        options={['Apagar', 'Cancelar']}
+        onSelect={handleActionSheetSelect}
+        onCancel={() => setActionSheetVisible(false)}
+      />
     </ScrollView>
   );
 }
@@ -150,7 +155,7 @@ const styles = StyleSheet.create({
   },
   anotacaoText: {
     fontSize: 16,
-    flex: 1, // Ocupa o restante do espaço horizontal disponível
+    flex: 1,
   },
   dataContainer: {
     marginRight: 10,
