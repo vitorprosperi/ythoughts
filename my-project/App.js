@@ -8,10 +8,13 @@ import { auth } from './Firebase/FirebaseConnection';
 import { Questionario } from './src/elements/Questionario';
 import { Addform } from './src/Addform';
 import AcessarAnotacao from './src/acessarform';
+import { TouchableOpacity } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons'; // Importe o ícone FontAwesome
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  
   const [initialRoute, setInitialRoute] = useState('Login');
 
   useEffect(() => {
@@ -42,10 +45,18 @@ export default function App() {
           component={Cadastro}
           options={{ title: 'Cadastro' }}
         />
-          <Stack.Screen
+        <Stack.Screen
           name="Home"
           component={Home}
-          options={{ title: 'Home' }}
+          options={({ navigation }) => ({
+            title: '',
+            headerLeft: () => (
+              <TouchableOpacity onPress={() => navigation.openDrawer()}>
+                <FontAwesome name="bars" size={24} color="black" style={{ marginLeft: 10 }} />
+              </TouchableOpacity>
+            ),
+            headerBackVisible: false,
+          })}
         />
         <Stack.Screen
           name="Addform"
