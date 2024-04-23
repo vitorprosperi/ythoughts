@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Form from './src/elements/Login';
-import Home from './src/elements/Home';
 import { Cadastro } from './src/elements/Cadastro';
 import { auth } from './Firebase/FirebaseConnection';
 import { Questionario } from './src/elements/Questionario';
@@ -10,11 +10,43 @@ import { Addform } from './src/Addform';
 import AcessarAnotacao from './src/acessarform';
 import { TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons'; // Importe o ícone FontAwesome
+import Home from './src/elements/Home';
+import Result from './src/elements/Resultado';
+import Lugares from './src/elements/Lugares';
+import { Feather } from '@expo/vector-icons';
 
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+
+const HomeTabs = () => {
+  return (
+    <Tab.Navigator screenOptions={{headerShown: false}}>
+      <Tab.Screen 
+      name="Início" 
+      component={Home}
+      options={{
+        tabBarIcon: ({color, size}) => <Feather name="home" color={color} size={size}/>
+      }} 
+      />
+      <Tab.Screen 
+      name="Dicas" 
+      component={Result}
+      options={{
+        tabBarIcon: ({color, size}) => <Feather name="anchor" color={color} size={size}/>
+      }}  
+      />
+      <Tab.Screen 
+      name="Lugares" 
+      component={Lugares}
+      options={{
+        tabBarIcon: ({color, size}) => <Feather name="map" color={color} size={size}/>
+      }}  
+      />
+    </Tab.Navigator>
+  );
+};
 
 export default function App() {
-  
   const [initialRoute, setInitialRoute] = useState('Login');
 
   useEffect(() => {
@@ -47,15 +79,10 @@ export default function App() {
         />
         <Stack.Screen
           name="Home"
-          component={Home}
+          component={HomeTabs} // Renderiza as tabs quando o usuário estiver na tela "Home"
           options={({ navigation }) => ({
-            title: '',
-            headerLeft: () => (
-              <TouchableOpacity onPress={() => navigation.openDrawer()}>
-                <FontAwesome name="bars" size={24} color="black" style={{ marginLeft: 10 }} />
-              </TouchableOpacity>
-            ),
-            headerBackVisible: false,
+          headerBackVisible: false,
+          title: '',
           })}
         />
         <Stack.Screen
