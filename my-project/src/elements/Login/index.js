@@ -74,20 +74,21 @@ export default function Form() {
   return (
     <View style={styles.container}>
       <View>
-        <Text style={styles.label}>E-MAIL</Text>
+        <Text style={styles.label}>Bem-Vindo</Text>
         <TextInput
           style={styles.input}
-          placeholder="teste.teste@gmail.com"
+          placeholder="Email"
           value={email}
           onChangeText={(text) => setEmail(text)}
+          multiline={false} // Definir para apenas uma linha
         />
-        <Text style={styles.label}>SENHA</Text>
         <TextInput
           style={styles.input}
-          placeholder="suasenhasupersegura"
+          placeholder="Senha"
           secureTextEntry={true}
           value={password}
           onChangeText={(text) => setPassword(text)}
+          multiline={false} // Definir para apenas uma linha
         />
         <TouchableOpacity style={styles.button} onPress={signIn}>
           <Text style={styles.buttonText}>Entrar</Text>
@@ -111,13 +112,13 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 5,
+    fontWeight: 'bold',
+    
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
+    borderBottomWidth: 1, // Adicionar apenas a borda inferior
+    borderColor: 'black', // Cor da borda
+    paddingVertical: 5, // Espaçamento vertical interno
     width: '100%',
   },
   button: {
