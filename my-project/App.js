@@ -13,6 +13,7 @@ import { FontAwesome } from '@expo/vector-icons'; // Importe o ícone FontAwesom
 import Home from './src/elements/Home';
 import Result from './src/elements/Resultado';
 import Lugares from './src/elements/Lugares';
+import Perfil from './src/elements/Perfil';
 import { Feather } from '@expo/vector-icons';
 
 const Stack = createNativeStackNavigator();
@@ -42,6 +43,13 @@ const HomeTabs = () => {
         tabBarIcon: ({color, size}) => <Feather name="map" color={color} size={size}/>
       }}  
       />
+      <Tab.Screen 
+      name="Perfil" 
+      component={Perfil}
+      options={{
+        tabBarIcon: ({color, size}) => <Feather name="user" color={color} size={size}/>
+      }}  
+      />
     </Tab.Navigator>
   );
 };
@@ -65,7 +73,7 @@ export default function App() {
         <Stack.Screen
           name="Login"
           component={Form}
-          options={{ title: 'Login' }}
+          options={{ title: 'Login' ,headerBackVisible: false,}}
         />
         <Stack.Screen
           name="Questionario"

@@ -80,7 +80,6 @@ export default function Form() {
           placeholder="Email"
           value={email}
           onChangeText={(text) => setEmail(text)}
-          multiline={false} // Definir para apenas uma linha
         />
         <TextInput
           style={styles.input}
@@ -88,7 +87,6 @@ export default function Form() {
           secureTextEntry={true}
           value={password}
           onChangeText={(text) => setPassword(text)}
-          multiline={false} // Definir para apenas uma linha
         />
         <TouchableOpacity style={styles.button} onPress={signIn}>
           <Text style={styles.buttonText}>Entrar</Text>
@@ -104,28 +102,32 @@ export default function Form() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
+    width: '100%', // Ocupa a largura total da tela
     backgroundColor: '#fff',
   },
   label: {
     fontSize: 16,
     marginBottom: 5,
     fontWeight: 'bold',
-    
+    paddingHorizontal: 20, // Adiciona um espaçamento lateral para os inputs
   },
   input: {
-    borderBottomWidth: 1, // Adicionar apenas a borda inferior
-    borderColor: 'black', // Cor da borda
-    paddingVertical: 5, // Espaçamento vertical interno
+    borderBottomWidth: 1,
+    borderColor: 'black',
+    paddingVertical: 5,
+    paddingHorizontal: 20, // Adiciona um espaçamento lateral para os inputs
+    width: '100%', // Ocupa a largura total do container
+    marginBottom: 10, // Adiciona um espaçamento inferior entre os inputs
+  },
+  buttonContainer: {
     width: '100%',
+    paddingHorizontal: 20, // Adiciona um espaçamento lateral para os botões
   },
   button: {
     backgroundColor: 'blue',
     padding: 10,
     borderRadius: 5,
-    marginBottom: 10,
+    marginBottom: 10, // Adiciona um espaçamento inferior entre os botões
     width: '100%',
     alignItems: 'center',
   },
@@ -134,3 +136,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+
+
