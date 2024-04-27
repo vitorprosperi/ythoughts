@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from "react-native";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigation } from '@react-navigation/native';
 import { auth, db } from "../../../Firebase/FirebaseConnection";
 import { collection, getDocs } from "firebase/firestore";
+import { Feather } from "@expo/vector-icons";
 
 export default function Form() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // Estado para controlar o carregamento
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -42,6 +44,7 @@ export default function Form() {
     }
   
     try {
+      setIsLoading(true); // Define o estado de carregamento como verdadeiro
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
   
@@ -64,6 +67,8 @@ export default function Form() {
     } catch (error) {
       Alert.alert('E-mail ou Senha incorretos.');
       console.log('Erro ao fazer login:', error.message);
+    } finally {
+      setIsLoading(false); // Define o estado de carregamento como falso após a autenticação
     }
   }
 
@@ -74,25 +79,35 @@ export default function Form() {
   return (
     <View style={styles.container}>
       <View>
-        <Text style={styles.label}>Bem-Vindo</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={(text) => setEmail(text)}
-        />
-        <TextInput
-          style={styles.input}
-           placeholder="Senha"
-          secureTextEntry={true}
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-        />
-        <TouchableOpacity style={styles.button} onPress={signIn}>
-          <Text style={styles.buttonText}>Entrar</Text>
+        <Text style={styles.label}>Bem-Vindo(a)</Text>
+        <View style={styles.inputContainer}>
+          <Feather name="mail" size={24} color="black" style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Feather name="lock" size={24} color="black" style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Senha"
+            secureTextEntry={true}
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+          />
+        </View>
+        <TouchableOpacity style={styles.buttonLogin} onPress={signIn}>
+          {isLoading ? ( // Exibe o componente de ActivityIndicator se isLoading for verdadeiro
+            <ActivityIndicator size="small" color="white" />
+          ) : (
+            <Text style={styles.buttonText}>Entrar</Text>
+          )}
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={navigateCadastro}>
-          <Text style={styles.buttonText}>Cadastrar</Text>
+        <TouchableOpacity style={styles.buttonRegister} onPress={navigateCadastro}>
+          <Text style={styles.registerText}>Não possui uma conta? Cadastre-se</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -102,40 +117,51 @@ export default function Form() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%', // Ocupa a largura total da tela
     backgroundColor: '#fff',
+    padding: 30,
+    justifyContent: 'center',
   },
   label: {
-    fontSize: 16,
-    marginBottom: 5,
+    color: 'green',
+    fontSize: 28,
+    marginTop: '14%',
+    marginBottom: '8%',
     fontWeight: 'bold',
-    paddingHorizontal: 20, // Adiciona um espaçamento lateral para os inputs
+    paddingLeft: 10,
   },
-  input: {
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     borderBottomWidth: 1,
     borderColor: 'black',
-    paddingVertical: 5,
-    paddingHorizontal: 20, // Adiciona um espaçamento lateral para os inputs
-    width: '100%', // Ocupa a largura total do container
-    marginBottom: 10, // Adiciona um espaçamento inferior entre os inputs
+    marginBottom: 12,
   },
-  buttonContainer: {
-    width: '100%',
-    paddingHorizontal: 20, // Adiciona um espaçamento lateral para os botões
-  },
-  button: {
-    backgroundColor: 'blue',
+  icon: {
     padding: 10,
-    borderRadius: 5,
-    marginBottom: 10, // Adiciona um espaçamento inferior entre os botões
+  },
+  input: {
+    flex: 1,
+    height: 40,
+  },
+  buttonLogin: {
+    backgroundColor: 'green',
+    padding: 13,
+    borderRadius: 30,
+    marginTop: 14,
+    marginBottom: 10,
     width: '100%',
     alignItems: 'center',
   },
   buttonText: {
     color: 'white',
+    fontSize: 18,
     fontWeight: 'bold',
   },
+  buttonRegister: {
+    marginTop: 14,
+    alignSelf: 'center',
+  },
+  registerText:{
+    color: '#a1a1a1'
+  },
 });
-
-
-

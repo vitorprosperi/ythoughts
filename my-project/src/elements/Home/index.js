@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   imageContainer: {
-    backgroundColor: '#AAE7F4',
+    backgroundColor: 'green',
     padding: 10,
     margin: 20,
     borderRadius: 50,
@@ -140,12 +140,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   anotacaoContainer: {
-    backgroundColor: '#AAE7F4',
+    backgroundColor: '#E63B1C',
     padding: 10,
     marginVertical: 5,
-    marginLeft: 5,
-    marginRight: 5,
-    borderRadius: 5,
+    marginLeft: 15,
+    marginRight: 15,
+    borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -159,6 +159,7 @@ const styles = StyleSheet.create({
   },
   dataContainer: {
     marginRight: 10,
+    marginLeft: 15,
   },
   dataText: {
     fontSize: 20,

@@ -8,8 +8,6 @@ import { auth } from './Firebase/FirebaseConnection';
 import { Questionario } from './src/elements/Questionario';
 import { Addform } from './src/Addform';
 import AcessarAnotacao from './src/acessarform';
-import { TouchableOpacity } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons'; // Importe o ícone FontAwesome
 import Home from './src/elements/Home';
 import Result from './src/elements/Resultado';
 import Lugares from './src/elements/Lugares';
