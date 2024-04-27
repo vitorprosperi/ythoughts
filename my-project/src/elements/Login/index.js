@@ -83,7 +83,7 @@ export default function Form() {
         />
         <TextInput
           style={styles.input}
-          placeholder="Senha"
+           placeholder="Senha"
           secureTextEntry={true}
           value={password}
           onChangeText={(text) => setPassword(text)}
