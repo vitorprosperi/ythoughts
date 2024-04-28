@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   anotacaoContainer: {
-    backgroundColor: '#E63B1C',
+    backgroundColor: '#B8F0B5',
     padding: 10,
     marginVertical: 5,
     marginLeft: 15,
