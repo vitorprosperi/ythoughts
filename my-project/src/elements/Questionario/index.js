@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView} from "react-native";
 import { db } from "../../../Firebase/FirebaseConnection";
-import { doc, collection, getDocs, addDoc } from "firebase/firestore";
+import { doc, collection, getDocs, addDoc, updateDoc, getDoc, setDoc } from "firebase/firestore";
 import { useRoute } from "@react-navigation/native";
 import { useAuth } from "../../../Firebase/FirebaseConnection";
 import { useNavigation } from "@react-navigation/native";
-
-
 
 export function Questionario() {
     const [perguntas, setPerguntas] = useState([]);
@@ -23,7 +21,7 @@ export function Questionario() {
                 const perguntasSnapshot = await getDocs(collection(db, 'perguntas'));
                 const perguntasData = perguntasSnapshot.docs.map(doc => doc.data());
                 setPerguntas(perguntasData);
-                const initialRespostas = perguntasData.map(() => [0, 0, 0]); // Inicializa as respostas de cada pergunta como [0, 0, 0]
+                const initialRespostas = perguntasData.map(() => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); // Inicializa as respostas de cada pergunta como [0]
                 setRespostas(initialRespostas);
             } catch (error) {
                 console.error('Erro ao buscar perguntas:', error);
@@ -48,39 +46,45 @@ export function Questionario() {
                 console.error('Usuário não autenticado.');
                 return;
             }
-
+    
             const userID = user.uid; // Obtenha o UID do usuário autenticado
-
-            // Adiciona as respostas como um novo documento na coleção "respostas" dentro do documento do usuário
+    
+            // Verifica se o usuário já possui um documento no Firestore
             const userDocRef = doc(db, 'usuarios', userID);
+            const userDocSnapshot = await getDoc(userDocRef);
+    
+            if (!userDocSnapshot.exists()) {
+                console.error('Documento do usuário não encontrado.');
+                return;
+            }
+    
+            // Referência à coleção 'respostas' dentro do documento do usuário
             const respostasCollectionRef = collection(userDocRef, 'respostas');
-            
-            // Itera sobre as respostas
-            respostas.forEach(async (resposta, index) => {
-                try {
-                    const docRef = await addDoc(respostasCollectionRef, {
-                        perguntaIndex: index, // Adicione o índice da pergunta para referência
-                        resposta: resposta, // Array com as opções selecionadas para essa pergunta
-                    });
-                    console.log('Resposta enviada com ID:', docRef.id);
-                    navigation.navigate('Home', { userId: user.uid });
-                } catch (error) {
-                    console.error('Erro ao enviar resposta:', error);
-                }
-            });
-            console.log('Todas as respostas foram enviadas com sucesso!');
+    
+            // Atualiza as respostas na coleção 'respostas' do usuário
+            const respostasData = respostas.map((resposta, index) => ({
+                perguntaIndex: index, // Adicione o índice da pergunta para referência
+                resposta: resposta, // Array com as opções selecionadas para essa pergunta
+            }));
+    
+            await setDoc(doc(respostasCollectionRef, 'dados'), { respostas: respostasData }, { merge: true });
+    
+            console.log('Respostas atualizadas com sucesso!');
+            navigation.navigate('Home', { userId: user.uid });
         } catch (error) {
-            console.error('Erro ao enviar respostas:', error);
+            console.error('Erro ao enviar ou atualizar respostas:', error);
         }
     };
+    
 
     const handleEnviarRespostas = () => {
         enviarRespostasFirestore(); // Chame a função enviarRespostasFirestore aqui
     };
 
     return (
+        <ScrollView>
         <View style={styles.container}>
-            <Text>Antes de Começarmos, Algumas Perguntas Serão Feitas!</Text>
+            <Text>Por Favor, responda o questionário </Text>
             {perguntas.map((pergunta, perguntaIndex) => (
                 <View key={perguntaIndex}>
                     <Text>{perguntaIndex + 1}: {pergunta.perg1}</Text>
@@ -229,10 +233,14 @@ export function Questionario() {
                 <Text style={styles.buttonText}>Enviar Respostas</Text>
             </TouchableOpacity>
         </View>
+        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
+    scrollViewContainer: {
+        flexGrow: 1,
+    },
     container: {
         flex: 1,
         alignItems: 'center',
