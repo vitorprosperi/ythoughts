@@ -85,7 +85,7 @@ export function Questionario() {
                 <View key={perguntaIndex}>
                     <Text>{perguntaIndex + 1}: {pergunta.perg1}</Text>
                     <View style={styles.botaoContainer}>
-                        {[...Array(10)].map((_, numero) => (
+                        {[...Array(5)].map((_, numero) => (
                             <TouchableOpacity
                                 key={numero}
                                 style={[
@@ -99,7 +99,7 @@ export function Questionario() {
                     </View>
                     <Text>{perguntaIndex + 2}: {pergunta.perg2}</Text>
                     <View style={styles.botaoContainer}>
-                        {[...Array(10)].map((_, numero) => (
+                        {[...Array(5)].map((_, numero) => (
                             <TouchableOpacity
                                 key={numero}
                                 style={[
@@ -113,7 +113,7 @@ export function Questionario() {
                     </View>
                     <Text>{perguntaIndex + 3}: {pergunta.perg3}</Text>
                     <View style={styles.botaoContainer}>
-                        {[...Array(10)].map((_, numero) => (
+                        {[...Array(5)].map((_, numero) => (
                             <TouchableOpacity
                                 key={numero}
                                 style={[
@@ -121,6 +121,104 @@ export function Questionario() {
                                     respostas[perguntaIndex] && respostas[perguntaIndex][2] === numero + 1 ? styles.botaoPressionado : null
                                 ]}
                                 onPress={() => handleRespostaChange(perguntaIndex, 2, numero + 1)}>
+                                <Text style={styles.botaoTexto}>{numero + 1}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                    <Text>{perguntaIndex + 4}: {pergunta.perg4}</Text>
+                    <View style={styles.botaoContainer}>
+                        {[...Array(5)].map((_, numero) => (
+                            <TouchableOpacity
+                                key={numero}
+                                style={[
+                                    styles.botao,
+                                    respostas[perguntaIndex] && respostas[perguntaIndex][3] === numero + 1 ? styles.botaoPressionado : null
+                                ]}
+                                onPress={() => handleRespostaChange(perguntaIndex, 3, numero + 1)}>
+                                <Text style={styles.botaoTexto}>{numero + 1}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                    <Text>{perguntaIndex + 5}: {pergunta.perg5}</Text>
+                    <View style={styles.botaoContainer}>
+                        {[...Array(5)].map((_, numero) => (
+                            <TouchableOpacity
+                                key={numero}
+                                style={[
+                                    styles.botao,
+                                    respostas[perguntaIndex] && respostas[perguntaIndex][4] === numero + 1 ? styles.botaoPressionado : null
+                                ]}
+                                onPress={() => handleRespostaChange(perguntaIndex, 4, numero + 1)}>
+                                <Text style={styles.botaoTexto}>{numero + 1}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                    <Text>{perguntaIndex + 6}: {pergunta.perg6}</Text>
+                    <View style={styles.botaoContainer}>
+                        {[...Array(5)].map((_, numero) => (
+                            <TouchableOpacity
+                                key={numero}
+                                style={[
+                                    styles.botao,
+                                    respostas[perguntaIndex] && respostas[perguntaIndex][5] === numero + 1 ? styles.botaoPressionado : null
+                                ]}
+                                onPress={() => handleRespostaChange(perguntaIndex, 5, numero + 1)}>
+                                <Text style={styles.botaoTexto}>{numero + 1}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                    <Text>{perguntaIndex + 7}: {pergunta.perg7}</Text>
+                    <View style={styles.botaoContainer}>
+                        {[...Array(5)].map((_, numero) => (
+                            <TouchableOpacity
+                                key={numero}
+                                style={[
+                                    styles.botao,
+                                    respostas[perguntaIndex] && respostas[perguntaIndex][6] === numero + 1 ? styles.botaoPressionado : null
+                                ]}
+                                onPress={() => handleRespostaChange(perguntaIndex, 6, numero + 1)}>
+                                <Text style={styles.botaoTexto}>{numero + 1}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                    <Text>{perguntaIndex + 8}: {pergunta.perg8}</Text>
+                    <View style={styles.botaoContainer}>
+                        {[...Array(5)].map((_, numero) => (
+                            <TouchableOpacity
+                                key={numero}
+                                style={[
+                                    styles.botao,
+                                    respostas[perguntaIndex] && respostas[perguntaIndex][7] === numero + 1 ? styles.botaoPressionado : null
+                                ]}
+                                onPress={() => handleRespostaChange(perguntaIndex, 7, numero + 1)}>
+                                <Text style={styles.botaoTexto}>{numero + 1}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                    <Text>{perguntaIndex + 9}: {pergunta.perg9}</Text>
+                    <View style={styles.botaoContainer}>
+                        {[...Array(5)].map((_, numero) => (
+                            <TouchableOpacity
+                                key={numero}
+                                style={[
+                                    styles.botao,
+                                    respostas[perguntaIndex] && respostas[perguntaIndex][8] === numero + 1 ? styles.botaoPressionado : null
+                                ]}
+                                onPress={() => handleRespostaChange(perguntaIndex, 8, numero + 1)}>
+                                <Text style={styles.botaoTexto}>{numero + 1}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                    <Text>{perguntaIndex + 10}: {pergunta.perg10}</Text>
+                    <View style={styles.botaoContainer}>
+                        {[...Array(5)].map((_, numero) => (
+                            <TouchableOpacity
+                                key={numero}
+                                style={[
+                                    styles.botao,
+                                    respostas[perguntaIndex] && respostas[perguntaIndex][9] === numero + 1 ? styles.botaoPressionado : null
+                                ]}
+                                onPress={() => handleRespostaChange(perguntaIndex, 9, numero + 1)}>
                                 <Text style={styles.botaoTexto}>{numero + 1}</Text>
                             </TouchableOpacity>
                         ))}
@@ -151,7 +249,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#3498db',
         padding: 10,
         borderRadius: 5,
-        width: '10%',
+        width: '18%', // Alterado para 18% para acomodar 5 botões na mesma linha
         alignItems: 'center',
     },
     botaoPressionado: {

@@ -104,7 +104,8 @@ const styles = StyleSheet.create({
     },
     dados:{
         paddingLeft: 10,
-        margin: 20,
+        marginTop: 20,
+        marginBottom: 20,
     },
     dadostext:{
         fontSize: 17,
