@@ -4,6 +4,8 @@ import { getFirestore } from "@firebase/firestore";
 import { useState, useEffect } from 'react';
 import { onAuthStateChanged } from "firebase/auth";
 
+let firebaseApp; // Variável para armazenar a instância do Firebase App
+
 const useAuth = () => {
   const [authInfo, setAuthInfo] = useState({ user: null, loading: true });
   const auth = getAuth();
@@ -19,7 +21,6 @@ const useAuth = () => {
   return authInfo;
 };
 
-
 const firebaseConfig = {
   apiKey: "AIzaSyDx4fX0_WrNBJm0_1REB5s3mFp0mXKkNyQ",
   authDomain: "ythoughts-80737.firebaseapp.com",
@@ -30,8 +31,12 @@ const firebaseConfig = {
   measurementId: "G-Y7N50VT52R"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+// Inicialize o aplicativo do Firebase somente se ainda não estiver inicializado
+if (!firebaseApp) {
+  firebaseApp = initializeApp(firebaseConfig);
+}
 
-export {auth, db, useAuth};
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
+
+export { auth, db, useAuth };
