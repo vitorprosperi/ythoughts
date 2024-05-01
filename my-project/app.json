@@ -30,7 +30,8 @@
     "extra": {
       "eas": {
         "projectId": "50bfe236-47e3-43b0-a1d4-551652b9db80"
-      }
+      },
+      "googlePlacesApiKey": "AIzaSyCbXcBbGcE_wSaMT75qjOFMHtBKMWXciDI"
     }
   }
 }
