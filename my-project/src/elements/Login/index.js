@@ -9,7 +9,8 @@ import { Feather } from "@expo/vector-icons";
 export default function Form() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // Estado para controlar o carregamento
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // Estado para controlar a visibilidade da senha
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -20,12 +21,10 @@ export default function Form() {
           const userID = user.uid;
           const respostasCollectionRef = collection(db, 'usuarios', userID, 'respostas');
           const respostasSnapshot = await getDocs(respostasCollectionRef);
-          console.log('Respostas:', respostasSnapshot.docs.length); // Adicionar um log para ver o número de documentos retornados
+          console.log('Respostas:', respostasSnapshot.docs.length);
           if (!respostasSnapshot.empty) {
-            // Se existem documentos na coleção de respostas, navegue para a tela "Home"
             navigation.navigate('Home');
           } else {
-            // Se não há documentos na coleção de respostas, navegue para a tela "Questionario"
             navigation.navigate('Questionario');
           }
         }
@@ -44,7 +43,7 @@ export default function Form() {
     }
   
     try {
-      setIsLoading(true); // Define o estado de carregamento como verdadeiro
+      setIsLoading(true);
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
   
@@ -55,10 +54,8 @@ export default function Form() {
         const respostasSnapshot = await getDocs(respostasCollectionRef);
   
         if (!respostasSnapshot.empty) {
-          // Se existem documentos na coleção de respostas, navegue para a tela "Home"
           navigation.navigate('Home');
         } else {
-          // Se não há documentos na coleção de respostas, navegue para a tela "Questionario"
           navigation.navigate('Questionario', { userId: user.uid });
         }
       } else {
@@ -68,12 +65,17 @@ export default function Form() {
       Alert.alert('E-mail ou Senha incorretos.');
       console.log('Erro ao fazer login:', error.message);
     } finally {
-      setIsLoading(false); // Define o estado de carregamento como falso após a autenticação
+      setIsLoading(false);
     }
   }
 
   function navigateCadastro() {
     navigation.navigate('Cadastro');
+  };
+
+  // Função para alternar a visibilidade da senha
+  const toggleShowPassword = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
   return (
@@ -94,13 +96,21 @@ export default function Form() {
           <TextInput
             style={styles.input}
             placeholder="Senha"
-            secureTextEntry={true}
+            secureTextEntry={!showPassword}
             value={password}
             onChangeText={(text) => setPassword(text)}
           />
+          {/* Ícone do "olho" que alterna a visibilidade da senha */}
+          <Feather
+            name={showPassword ? "eye" : "eye-off"} // Inverte os ícones dependendo do estado de showPassword
+            size={24}
+            color="black"
+            style={styles.icon}
+            onPress={toggleShowPassword}
+          />
         </View>
         <TouchableOpacity style={styles.buttonLogin} onPress={signIn}>
-          {isLoading ? ( // Exibe o componente de ActivityIndicator se isLoading for verdadeiro
+          {isLoading ? (
             <ActivityIndicator size="small" color="white" />
           ) : (
             <Text style={styles.buttonText}>Entrar</Text>

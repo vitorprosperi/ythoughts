@@ -35,7 +35,7 @@ const HomeTabs = () => {
       }}  
       />
       <Tab.Screen 
-      name="Lugares" 
+      name="Clínicas" 
       component={Lugares}
       options={{
         tabBarIcon: ({color, size}) => <Feather name="map" color={color} size={size}/>
@@ -87,8 +87,7 @@ export default function App() {
           name="Home"
           component={HomeTabs} // Renderiza as tabs quando o usuário estiver na tela "Home"
           options={({ navigation }) => ({
-          headerBackVisible: false,
-          title: '',
+          headerShown: false
           })}
         />
         <Stack.Screen

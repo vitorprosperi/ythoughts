@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     label: {
         color: 'green',
         fontSize: 28,
-        marginTop: '5%',
+        marginTop: '30%',
         marginBottom: '8%',
         fontWeight: 'bold',
         paddingLeft: 10,

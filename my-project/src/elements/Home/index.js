@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     backgroundColor: 'green',
     padding: 10,
-    margin: 20,
+    marginTop: 70,
     borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',

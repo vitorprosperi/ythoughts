@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, Button, TextInput, Alert, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, TextInput, Alert, StyleSheet, ActivityIndicator } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { auth } from "../../../Firebase/FirebaseConnection";
 import { db } from "../../../Firebase/FirebaseConnection";
 import { setDoc, doc} from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { Feather } from "@expo/vector-icons";
 
 export function Cadastro() {
     const navigation = useNavigation();
@@ -12,23 +13,32 @@ export function Cadastro() {
     const [idade, setIdade] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false); // Estado para controlar a visibilidade da senha
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Estado para controlar a visibilidade da confirmação de senha
 
     const signUp = async () => {
-        if (!nome || !idade || !email || !password) {
+        if (!nome || !idade || !email || !password || !confirmPassword) {
             Alert.alert('Todos os campos devem ser preenchidos.');
             return;
         }
         
+        if (password !== confirmPassword) {
+            Alert.alert('Os dois campos de senha devem ser iguais.');
+            return;
+        }
+        
+        setLoading(true);
+
         try {
-            // Cadastrar usuário no Firebase Authentication
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const userID = userCredential.user.uid; // Obter o UID do usuário cadastrado
+            const userID = userCredential.user.uid;
     
-            // Salvar informações do usuário no Firestore associadas ao UID
             await setDoc(doc(db, "usuarios", userID), {
                 nome: nome,
                 idade: idade,
-                email: email // Você pode adicionar mais informações, se necessário
+                email: email
             });
     
             console.log("Usuário cadastrado com sucesso! UID:", userID);
@@ -38,38 +48,86 @@ export function Cadastro() {
         } catch (error) {
             console.log('Erro ao cadastrar usuário:', error.message);
             Alert.alert('Erro ao cadastrar usuário:', error.message);
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Crie Seu Cadastro!</Text>
-            <Text style={styles.label}>Nome</Text>
-            <TextInput
-                style={styles.input}
-                value={nome}
-                onChangeText={setNome}
-            />
-            <Text style={styles.label}>Idade</Text>
-            <TextInput
-                style={styles.input}
-                value={idade}
-                onChangeText={setIdade}
-            />
-            <Text style={styles.label}>E-mail</Text>
-            <TextInput
-                style={styles.input}
-                value={email}
-                onChangeText={setEmail}
-            />
-            <Text style={styles.label}>Senha</Text>
-            <TextInput
-                style={styles.input}
-                value={password}
-                secureTextEntry={true}
-                onChangeText={setPassword}
-            />
-            <Button title="Enviar" onPress={signUp} />
+            <View style={styles.inputContainer}>
+                <Feather name="user" size={24} color="black" style={styles.icon} />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Nome"
+                    value={nome}
+                    onChangeText={setNome}
+                />
+            </View>
+            <View style={styles.inputContainer}>
+                <Feather name="calendar" size={24} color="black" style={styles.icon} />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Idade"
+                    value={idade}
+                    onChangeText={setIdade}
+                />
+            </View>
+            <View style={styles.inputContainer}>
+                <Feather name="mail" size={24} color="black" style={styles.icon} />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Email"
+                    value={email}
+                    onChangeText={setEmail}
+                />
+            </View>
+            <View style={styles.inputContainer}>
+                <Feather name="lock" size={24} color="black" style={styles.icon} />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Senha"
+                    value={password}
+                    secureTextEntry={!showPassword} // Inverte a visibilidade da senha
+                    onChangeText={setPassword}
+                />
+                <Feather
+                    name={showPassword ? "eye" : "eye-off"} // Inverte o ícone do olho
+                    size={24}
+                    color="black"
+                    style={styles.icon}
+                    onPress={() => setShowPassword((prevShowPassword) => !prevShowPassword)}
+                />
+            </View>
+            <View style={styles.inputContainer}>
+                <Feather name="lock" size={24} color="black" style={styles.icon} />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Confirme Sua Senha"
+                    value={confirmPassword}
+                    secureTextEntry={!showConfirmPassword} // Inverte a visibilidade da confirmação de senha
+                    onChangeText={setConfirmPassword}
+                />
+                <Feather
+                    name={showConfirmPassword ? "eye" : "eye-off"} // Inverte o ícone do olho
+                    size={24}
+                    color="black"
+                    style={styles.icon}
+                    onPress={() => setShowConfirmPassword((prevShowConfirmPassword) => !prevShowConfirmPassword)}
+                />
+            </View>
+            <TouchableOpacity 
+                style={styles.buttonRegister} 
+                onPress={signUp}
+                disabled={loading}
+            >
+                {loading ? (
+                    <ActivityIndicator size="small" color="white" />
+                ) : (
+                    <Text style={styles.buttonText}>Cadastrar</Text>
+                )}
+            </TouchableOpacity>
         </View>
     );
 }
@@ -83,20 +141,39 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     title: {
-        fontSize: 20,
+        color: 'green',
+        fontSize: 28,
+        marginTop: '14%',
+        marginBottom: '8%',
         fontWeight: 'bold',
-        marginBottom: 20,
+        paddingLeft: 10,
     },
-    label: {
-        fontSize: 16,
-        marginBottom: 5,
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderColor: 'black',
+        marginBottom: 12,
+    },
+    icon: {
+        padding: 10,
     },
     input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
-        padding: 10,
+        flex: 1,
+        height: 40,
+    },
+    buttonRegister: {
+        backgroundColor: 'green',
+        padding: 13,
+        borderRadius: 30,
+        marginTop: 14,
         marginBottom: 10,
         width: '100%',
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: 'bold',
     },
 });

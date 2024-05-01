@@ -21,7 +21,7 @@ export function Questionario() {
                 const perguntasSnapshot = await getDocs(collection(db, 'perguntas'));
                 const perguntasData = perguntasSnapshot.docs.map(doc => doc.data());
                 setPerguntas(perguntasData);
-                const initialRespostas = perguntasData.map(() => [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]); // Inicializa as respostas de cada pergunta como [0]
+                const initialRespostas = perguntasData.map(() => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); // Inicializa as respostas de cada pergunta como [0]
                 setRespostas(initialRespostas);
             } catch (error) {
                 console.error('Erro ao buscar perguntas:', error);
