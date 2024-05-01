@@ -1,18 +1,16 @@
 import React, { useEffect, useState, useRef } from "react";
-import MapView, { Marker } from 'react-native-maps';
 import { Text, View, StyleSheet } from "react-native";
+import MapView, { Marker } from 'react-native-maps';
 import { requestForegroundPermissionsAsync, 
     getCurrentPositionAsync,
     watchPositionAsync, 
-    LocationAccuracy,
-    // Importe Constants do Expo
+    LocationAccuracy
 } from 'expo-location';
-import Constants from 'expo-constants';
-import axios from 'axios'; // Importe a biblioteca axios para fazer solicitações HTTP
+import axios from 'axios'; 
 
 export default function Lugares() {
     const [location, setLocation] = useState(null);
-    const [mapLoaded, setMapLoaded] = useState(false);
+    const [markers, setMarkers] = useState([]);
     const mapRef = useRef(null);
 
     async function requestLocationPermissions() {
@@ -35,38 +33,41 @@ export default function Lugares() {
             distanceInterval: 1,
         }, (response) => {
             setLocation(response);
-            if (mapRef.current && !mapLoaded) {
-                mapRef.current.animateCamera({
-                    pitch: 70,
-                    center: response.coords
-                });
-                setMapLoaded(true);
-            }
         });
     }, []);
 
     useEffect(() => {
-        // Solicitação à API do Google Places
-        const googlePlacesApiKey = Constants.manifest.extra.googlePlacesApiKey; // Obtenha a chave da API do Google Places do objeto Constants
-        const apiUrl = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json`;
-
+        const googlePlacesApiKey = "AIzaSyCbI873M-Sz3uWhpEiJC9_CZDEjNjodpZE";
+        const apiUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json`;
+    
         if (location) {
             axios.get(apiUrl, {
                 params: {
-                    input: 'clinic',
-                    inputtype: 'textquery',
-                    key: googlePlacesApiKey, // Use a chave da API do Google Places
-                    locationbias: `circle:5000@${location.coords.latitude},${location.coords.longitude}`
+                    location: `${location.coords.latitude},${location.coords.longitude}`,
+                    radius: 20000,
+                    type: 'hospital', // Tipo de lugar: hospital
+                    key: googlePlacesApiKey,
                 }
             }).then(response => {
-                console.log(response.data);
-                // Aqui você pode processar a resposta e adicionar marcadores ao mapa
+                if (response.data && response.data.results) {
+                    const hospitals = response.data.results;
+                    const markersData = hospitals.map(hospital => ({
+                        latitude: hospital.geometry.location.lat,
+                        longitude: hospital.geometry.location.lng,
+                        title: hospital.name,
+                        description: hospital.vicinity
+                    }));
+                    setMarkers(markersData);
+                } else {
+                    console.warn('Nenhum hospital encontrado.');
+                }
             }).catch(error => {
                 console.error('Erro ao fazer solicitação à API do Google Places:', error);
             });
         }
-    }, [location]); // Execute esta solicitação sempre que a localização for atualizada
-
+    }, [location]);
+    
+    // Renderizar o mapa com marcadores
     return (
         <View style={styles.container}>
             {location ? (
@@ -76,26 +77,32 @@ export default function Lugares() {
                     initialRegion={{
                         latitude: location.coords.latitude,
                         longitude: location.coords.longitude,
-                        latitudeDelta: 0.005,
-                        longitudeDelta: 0.005,
-                    }}
-                    onLayout={() => {
-                        if (mapRef.current && !mapLoaded) {
-                            mapRef.current.animateCamera({
-                                pitch: 70
-                            });
-                            setMapLoaded(true);
-                        }
+                        latitudeDelta: 0.05,
+                        longitudeDelta: 0.05,
                     }}
                 >
-                    {/* Marque a localização atual */}
+                    {/* Adicionar marcador da sua localização */}
                     <Marker
                         coordinate={{
                             latitude: location.coords.latitude,
                             longitude: location.coords.longitude,
                         }}
+                        title="Sua Localização"
+                        pinColor="yellow" // Definindo a cor do marcador para amarelo
                     />
-                    {/* Adicione mais marcadores aqui com base na resposta da API do Google Places */}
+                    
+                    {/* Adicionar marcadores dos hospitais */}
+                    {markers.map((marker, index) => (
+                        <Marker
+                            key={index}
+                            coordinate={{
+                                latitude: marker.latitude,
+                                longitude: marker.longitude,
+                            }}
+                            title={marker.title}
+                            description={marker.description}
+                        />
+                    ))}
                 </MapView>
             ) : (
                 <Text>Carregando mapa...</Text>
