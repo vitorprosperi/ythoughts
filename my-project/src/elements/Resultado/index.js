@@ -36,7 +36,7 @@ export default function Result() {
             {userData && (
                 <ScrollView contentContainerStyle={styles.scrollViewContainer}>
                     <Text style={styles.paragraph}>
-                        Prezado {userData.nome},
+                        Prezado (a) {userData.nome},
                     </Text>
                     <Text style={styles.paragraph}>
                         Após uma análise cuidadosa de suas respostas, gostaríamos de destacar a importância de buscar apoio profissional em saúde mental.

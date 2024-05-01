@@ -21,7 +21,7 @@ export function Questionario() {
                 const perguntasSnapshot = await getDocs(collection(db, 'perguntas'));
                 const perguntasData = perguntasSnapshot.docs.map(doc => doc.data());
                 setPerguntas(perguntasData);
-                const initialRespostas = perguntasData.map(() => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); // Inicializa as respostas de cada pergunta como [0]
+                const initialRespostas = perguntasData.map(() => [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]); // Inicializa as respostas de cada pergunta como [0]
                 setRespostas(initialRespostas);
             } catch (error) {
                 console.error('Erro ao buscar perguntas:', error);
@@ -58,6 +58,15 @@ export function Questionario() {
                 return;
             }
     
+            // Referência ao subdocumento 'dados' dentro do documento 'respostas' do usuário
+            const dadosDocRef = doc(userDocRef, 'respostas', 'dados');
+    
+            // Atualiza o campo "total" dentro do subdocumento 'dados'
+            const total = respostas.reduce((acc, resposta) => {
+                return acc + resposta.reduce((acc, opcao) => acc + opcao, 0);
+            }, 0);
+            await setDoc(dadosDocRef, { total: total }, { merge: true });
+    
             // Referência à coleção 'respostas' dentro do documento do usuário
             const respostasCollectionRef = collection(userDocRef, 'respostas');
     
@@ -66,7 +75,6 @@ export function Questionario() {
                 perguntaIndex: index, // Adicione o índice da pergunta para referência
                 resposta: resposta, // Array com as opções selecionadas para essa pergunta
             }));
-    
             await setDoc(doc(respostasCollectionRef, 'dados'), { respostas: respostasData }, { merge: true });
     
             console.log('Respostas atualizadas com sucesso!');

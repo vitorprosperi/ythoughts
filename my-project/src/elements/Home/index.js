@@ -29,12 +29,13 @@ export default function Home() {
       const userDocRef = doc(db, 'usuarios', userID);
       const anotacoesCollectionRef = collection(userDocRef, 'anotacoes');
       const querySnapshot = await getDocs(anotacoesCollectionRef);
-      const fetchedAnotacoes = querySnapshot.docs.map(doc => ({
+      let fetchedAnotacoes = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
 
-      fetchedAnotacoes.reverse();
+      // Ordenar as anotações por data (do mais recente para o mais antigo)
+      fetchedAnotacoes.sort((a, b) => new Date(b.data) - new Date(a.data));
 
       setAnotacoes(fetchedAnotacoes);
     } catch (error) {
