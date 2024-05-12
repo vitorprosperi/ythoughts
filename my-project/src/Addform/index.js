@@ -73,16 +73,17 @@ const navigation = useNavigation();
 
 const styles = StyleSheet.create({
     button: {
-      backgroundColor: '#4CAF50',
-      borderRadius: 10,
-      paddingVertical: 12,
-      paddingHorizontal: 24,
-      alignItems: 'center',
-      marginTop: 20,
+    backgroundColor: 'green',
+    padding: 13,
+    borderRadius: 30,
+    marginTop: 14,
+    marginBottom: 10,
+    width: '100%',
+    alignItems: 'center',
     },
     buttonText: {
       color: 'white',
-      fontSize: 16,
+      fontSize: 18 ,
       fontWeight: 'bold',
     },
   });

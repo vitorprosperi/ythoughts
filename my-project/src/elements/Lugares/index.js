@@ -44,8 +44,8 @@ export default function Lugares() {
             axios.get(apiUrl, {
                 params: {
                     location: `${location.coords.latitude},${location.coords.longitude}`,
-                    radius: 20000,
-                    type: 'hospital', // Tipo de lugar: hospital
+                    radius: 5000,
+                    keyword: 'psicólogo,psiquiatra',
                     key: googlePlacesApiKey,
                 }
             }).then(response => {
@@ -105,7 +105,7 @@ export default function Lugares() {
                     ))}
                 </MapView>
             ) : (
-                <Text>Carregando mapa...</Text>
+                <Text style={styles.text}>Carregando mapa...</Text>
             )}
         </View>
     );
@@ -118,4 +118,8 @@ const styles = StyleSheet.create({
     map: {
         flex: 1,
     },
+    text:{
+        alignItems: "center",
+        flexDirection: 'row',
+    }
 });
