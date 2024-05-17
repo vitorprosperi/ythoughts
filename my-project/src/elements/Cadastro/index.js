@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, TextInput, Alert, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, TextInput, Alert, StyleSheet, ActivityIndicator, Switch } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { auth } from "../../../Firebase/FirebaseConnection";
 import { db } from "../../../Firebase/FirebaseConnection";
-import { setDoc, doc} from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { Feather } from "@expo/vector-icons";
 
@@ -15,8 +15,10 @@ export function Cadastro() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const [showPassword, setShowPassword] = useState(false); // Estado para controlar a visibilidade da senha
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Estado para controlar a visibilidade da confirmação de senha
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isPsychologist, setIsPsychologist] = useState(false); // Estado para controlar o switch
+    const [crp, setCrp] = useState(''); // Estado para o CRP do psicólogo
 
     const signUp = async () => {
         if (!nome || !idade || !email || !password || !confirmPassword) {
@@ -28,6 +30,11 @@ export function Cadastro() {
             Alert.alert('Os dois campos de senha devem ser iguais.');
             return;
         }
+
+        if (isPsychologist && !crp) {
+            Alert.alert('Por favor, preencha seu CRP.');
+            return;
+        }
         
         setLoading(true);
 
@@ -35,12 +42,26 @@ export function Cadastro() {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const userID = userCredential.user.uid;
     
-            await setDoc(doc(db, "usuarios", userID), {
-                nome: nome,
-                idade: idade,
-                email: email
-            });
-    
+            if (isPsychologist) {
+                const psychologistData = {
+                    crp: crp,
+                    nome: nome,
+                    idade: idade,
+                    email: email,
+                };
+                // Cria o documento na coleção "psicologos"
+                await setDoc(doc(db, "psicologos", userID), psychologistData);
+            } else {
+                const userData = {
+                    nome: nome,
+                    idade: idade,
+                    email: email,
+                    isPsychologist: isPsychologist,
+                };
+                // Cria o documento do usuário na coleção "usuarios"
+                await setDoc(doc(db, "usuarios", userID), userData);
+            }
+
             console.log("Usuário cadastrado com sucesso! UID:", userID);
             console.log("Dados enviados com sucesso para o Firestore!");
             Alert.alert('Cadastrado com sucesso!\nVoltando ao Login...');
@@ -89,11 +110,11 @@ export function Cadastro() {
                     style={styles.input}
                     placeholder="Senha"
                     value={password}
-                    secureTextEntry={!showPassword} // Inverte a visibilidade da senha
+                    secureTextEntry={!showPassword}
                     onChangeText={setPassword}
                 />
                 <Feather
-                    name={showPassword ? "eye" : "eye-off"} // Inverte o ícone do olho
+                    name={showPassword ? "eye" : "eye-off"}
                     size={24}
                     color="black"
                     style={styles.icon}
@@ -106,17 +127,35 @@ export function Cadastro() {
                     style={styles.input}
                     placeholder="Confirme Sua Senha"
                     value={confirmPassword}
-                    secureTextEntry={!showConfirmPassword} // Inverte a visibilidade da confirmação de senha
+                    secureTextEntry={!showConfirmPassword}
                     onChangeText={setConfirmPassword}
                 />
                 <Feather
-                    name={showConfirmPassword ? "eye" : "eye-off"} // Inverte o ícone do olho
+                    name={showConfirmPassword ? "eye" : "eye-off"}
                     size={24}
                     color="black"
                     style={styles.icon}
                     onPress={() => setShowConfirmPassword((prevShowConfirmPassword) => !prevShowConfirmPassword)}
                 />
             </View>
+            <View style={styles.switchContainer}>
+                <Text style={styles.switchLabel}>É psicólogo?</Text>
+                <Switch
+                    value={isPsychologist}
+                    onValueChange={setIsPsychologist}
+                />
+            </View>
+            {isPsychologist && (
+                <View style={styles.inputContainer}>
+                    <Feather name="award" size={24} color="black" style={styles.icon} />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="CRP"
+                        value={crp}
+                        onChangeText={setCrp}
+                    />
+                </View>
+            )}
             <TouchableOpacity 
                 style={styles.buttonRegister} 
                 onPress={signUp}
@@ -175,5 +214,14 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 18,
         fontWeight: 'bold',
+    },
+    switchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    switchLabel: {
+        flex: 1,
+        fontSize: 16,
     },
 });

@@ -13,6 +13,7 @@ import Result from './src/elements/Resultado';
 import Lugares from './src/elements/Lugares';
 import Perfil from './src/elements/Perfil';
 import { Feather } from '@expo/vector-icons';
+import HomePsic from './src/elements/homepsic';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -82,6 +83,11 @@ export default function App() {
           name="Cadastro"
           component={Cadastro}
           options={{ title: 'Cadastro' }}
+        />
+        <Stack.Screen
+          name="HomePsic"
+          component={HomePsic}
+          options={{ title: 'HomePsic', headerBackVisible: false, }}
         />
         <Stack.Screen
           name="Home"

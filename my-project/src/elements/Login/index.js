@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from "react-native";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigation } from '@react-navigation/native';
-import { auth, db } from "../../../Firebase/FirebaseConnection";
 import { collection, getDocs } from "firebase/firestore";
 import { Feather } from "@expo/vector-icons";
+import { db, auth } from "../../../Firebase/FirebaseConnection";
 
 export default function Form() {
   const [email, setEmail] = useState('');
@@ -14,26 +14,34 @@ export default function Form() {
   const navigation = useNavigation();
 
   useEffect(() => {
-    const checkRespostas = async () => {
+    const checkUserType = async () => {
       try {
         const user = auth.currentUser;
         if (user) {
           const userID = user.uid;
-          const respostasCollectionRef = collection(db, 'usuarios', userID, 'respostas');
-          const respostasSnapshot = await getDocs(respostasCollectionRef);
-          console.log('Respostas:', respostasSnapshot.docs.length);
-          if (!respostasSnapshot.empty) {
-            navigation.navigate('Home');
+          // Verifica se o usuário está na coleção de psicólogos
+          const psicologosCollectionRef = collection(db, 'psicologos');
+          const psicologosSnapshot = await getDocs(psicologosCollectionRef);
+          const isPsicologo = psicologosSnapshot.docs.some(doc => doc.id === userID);
+
+          if (isPsicologo) {
+            navigation.navigate('HomePsic');
           } else {
-            navigation.navigate('Questionario');
+            const respostasCollectionRef = collection(db, 'usuarios', userID, 'respostas');
+            const respostasSnapshot = await getDocs(respostasCollectionRef);
+            if (!respostasSnapshot.empty) {
+              navigation.navigate('Home');
+            } else {
+              navigation.navigate('Questionario');
+            }
           }
         }
       } catch (error) {
-        console.error('Erro ao verificar respostas:', error);
+        console.error('Erro ao verificar o tipo de usuário:', error);
       }
     };
 
-    checkRespostas();
+    checkUserType();
   }, []);
 
   async function signIn() {
@@ -41,22 +49,29 @@ export default function Form() {
       Alert.alert('Preencha Todos os Campos!');
       return;
     }
-  
+
     try {
       setIsLoading(true);
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-  
+
       if (user) {
         console.log('Usuário logado com sucesso! UID:', user.uid);
         const userID = user.uid;
-        const respostasCollectionRef = collection(db, 'usuarios', userID, 'respostas');
-        const respostasSnapshot = await getDocs(respostasCollectionRef);
-  
-        if (!respostasSnapshot.empty) {
-          navigation.navigate('Home');
+        const psicologosCollectionRef = collection(db, 'psicologos');
+        const psicologosSnapshot = await getDocs(psicologosCollectionRef);
+        const isPsicologo = psicologosSnapshot.docs.some(doc => doc.id === userID);
+
+        if (isPsicologo) {
+          navigation.navigate('HomePsic');
         } else {
-          navigation.navigate('Questionario', { userId: user.uid });
+          const respostasCollectionRef = collection(db, 'usuarios', userID, 'respostas');
+          const respostasSnapshot = await getDocs(respostasCollectionRef);
+          if (!respostasSnapshot.empty) {
+            navigation.navigate('Home');
+          } else {
+            navigation.navigate('Questionario', { userId: user.uid });
+          }
         }
       } else {
         console.error('O objeto user é nulo.');
