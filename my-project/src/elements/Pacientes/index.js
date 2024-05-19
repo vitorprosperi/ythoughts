@@ -51,6 +51,18 @@ export default function Pacientes() {
       }
 
       const userID = user.uid;
+      const psicologoDocRef = doc(db, 'psicologos', userID);
+
+      // Busca os dados do psicólogo
+      const psicologoDoc = await getDoc(psicologoDocRef);
+      if (!psicologoDoc.exists()) {
+        Alert.alert('Dados do psicólogo não encontrados.');
+        return;
+      }
+
+      const psicologoData = psicologoDoc.data();
+      const { nome, email } = psicologoData;
+
       const pacienteDocRef = doc(db, 'usuarios', codigoPaciente);
 
       // Busca os dados do paciente existente
@@ -69,8 +81,8 @@ export default function Pacientes() {
       // Cria um subdocumento chamado 'psicologo' dentro do documento do paciente
       const psicologoSubDocRef = doc(pacienteDocRef, 'psicologo', userID);
       await setDoc(psicologoSubDocRef, {
-        psicologoUID: userID,
-        timestamp: new Date(),
+        nome: nome,
+        email: email,
       });
 
       Alert.alert('Paciente adicionado com sucesso!');
@@ -262,5 +274,9 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     alignItems: 'center',
     width: '100%',
+  },
+  deleteButtonText: {
+    color: 'white',
+    fontSize: 18,
   },
 });

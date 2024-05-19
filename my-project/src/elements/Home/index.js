@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, RefreshControl, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, RefreshControl, Alert, Modal } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { auth, db } from '../../../Firebase/FirebaseConnection';
 import { collection, doc, getDocs, deleteDoc, setDoc, getDoc } from 'firebase/firestore';
@@ -12,6 +12,8 @@ export default function Home() {
   const [refreshing, setRefreshing] = useState(false);
   const [selectedAnotacaoId, setSelectedAnotacaoId] = useState(null);
   const [actionSheetVisible, setActionSheetVisible] = useState(false);
+  const [psicologos, setPsicologos] = useState([]);
+  const [psicologoSelectionVisible, setPsicologoSelectionVisible] = useState(false);
 
   useEffect(() => {
     fetchAnotacoes();
@@ -59,17 +61,16 @@ export default function Home() {
     setActionSheetVisible(true);
   };
 
-  const handleActionSheetSelect = async (index) => {
+  const handleActionSheetSelect = (index) => {
     if (index === 0) {
-      await handleShare(selectedAnotacaoId);
+      fetchPsicologos();
     } else if (index === 1) {
       handleDelete(selectedAnotacaoId);
     }
-    setSelectedAnotacaoId(null);
     setActionSheetVisible(false);
   };
 
-  const handleShare = async (id) => {
+  const fetchPsicologos = async () => {
     try {
       const user = auth.currentUser;
       if (!user) {
@@ -79,34 +80,46 @@ export default function Home() {
 
       const userID = user.uid;
       const userDocRef = doc(db, 'usuarios', userID);
-      const anotacaoDocRef = doc(userDocRef, 'anotacoes', id);
+      const psicologoSubDocRef = collection(userDocRef, 'psicologo');
+      const psicologoSnapshot = await getDocs(psicologoSubDocRef);
+
+      if (!psicologoSnapshot.empty) {
+        const psicologosList = psicologoSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        setPsicologos(psicologosList);
+        setPsicologoSelectionVisible(true);
+      } else {
+        Alert.alert('Nenhum psicólogo associado encontrado.');
+      }
+    } catch (error) {
+      console.error('Erro ao recuperar psicólogos:', error);
+      Alert.alert('Erro ao recuperar psicólogos:', error.message);
+    }
+  };
+
+  const handleShare = async (psicologo) => {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        console.error('Usuário não autenticado.');
+        return;
+      }
+
+      const userID = user.uid;
+      const userDocRef = doc(db, 'usuarios', userID);
+      const anotacaoDocRef = doc(userDocRef, 'anotacoes', selectedAnotacaoId);
       const anotacaoSnapshot = await getDoc(anotacaoDocRef);
 
       if (anotacaoSnapshot.exists()) {
         const anotacaoData = anotacaoSnapshot.data();
+        const psicologoDocRef = doc(db, 'psicologos', psicologo.id);
+        const anotacaoCompartilhadaDocRef = doc(psicologoDocRef, 'anotacoes', selectedAnotacaoId);
 
-        // Recuperar a lista de psicólogos do paciente
-        const pacienteDocRef = doc(db, 'usuarios', userID);
-        const pacienteDocSnapshot = await getDoc(pacienteDocRef);
-
-        if (pacienteDocSnapshot.exists()) {
-          const pacienteData = pacienteDocSnapshot.data();
-          const psicologos = pacienteData.psicologos;
-
-          if (psicologos && psicologos.length > 0) {
-            // Para simplicidade, vamos compartilhar com o primeiro psicólogo da lista
-            const psicologoId = psicologos[0];
-            const psicologoDocRef = doc(db, 'psicologos', psicologoId);
-            const anotacaoCompartilhadaDocRef = doc(psicologoDocRef, 'anotacoes', id);
-
-            await setDoc(anotacaoCompartilhadaDocRef, anotacaoData);
-            Alert.alert('Anotação compartilhada com sucesso!');
-          } else {
-            Alert.alert('Nenhum psicólogo associado encontrado.');
-          }
-        } else {
-          Alert.alert('Erro ao recuperar dados do paciente.');
-        }
+        await setDoc(anotacaoCompartilhadaDocRef, anotacaoData);
+        Alert.alert('Anotação compartilhada com sucesso!');
       } else {
         Alert.alert('Anotação não encontrada.');
       }
@@ -114,6 +127,7 @@ export default function Home() {
       console.error('Erro ao compartilhar anotação:', error);
       Alert.alert('Erro ao compartilhar anotação:', error.message);
     }
+    setPsicologoSelectionVisible(false);
   };
 
   const handleDelete = async (id) => {
@@ -168,6 +182,34 @@ export default function Home() {
         onSelect={handleActionSheetSelect}
         onCancel={() => setActionSheetVisible(false)}
       />
+
+      <Modal
+        visible={psicologoSelectionVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setPsicologoSelectionVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Selecione um Psicólogo</Text>
+            {psicologos.map(psicologo => (
+              <TouchableOpacity
+                key={psicologo.id}
+                style={styles.psicologoItem}
+                onPress={() => handleShare(psicologo)}
+              >
+                <Text style={styles.psicologoText}>{psicologo.nome}</Text>
+              </TouchableOpacity>
+            ))}
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setPsicologoSelectionVisible(false)}
+            >
+              <Text style={styles.buttonText}>Fechar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -217,4 +259,41 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     padding: 13,
   },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  psicologoItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  psicologoText: {
+    fontSize: 16,
+  },
+  closeButton: {
+    marginTop: 10,
+    backgroundColor: '#2196F3',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+  },
 });
+
