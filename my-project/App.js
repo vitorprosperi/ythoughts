@@ -14,9 +14,45 @@ import Lugares from './src/elements/Lugares';
 import Perfil from './src/elements/Perfil';
 import { Feather } from '@expo/vector-icons';
 import HomePsic from './src/elements/homepsic';
+import Pacientes from './src/elements/Pacientes';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+
+const PsicTabs = () => {
+  return (
+    <Tab.Navigator screenOptions={{ headerShown: false }}>
+      <Tab.Screen 
+        name="HomePsic" 
+        component={HomePsic} 
+        options={{
+          tabBarIcon: ({ color, size }) => <Feather name="home" color={color} size={size} />
+        }} 
+      />
+      <Tab.Screen 
+        name="Dicas" 
+        component={Result} 
+        options={{
+          tabBarIcon: ({ color, size }) => <Feather name="anchor" color={color} size={size} />
+        }} 
+      />
+      <Tab.Screen 
+        name="Pacientes" 
+        component={Pacientes} 
+        options={{
+          tabBarIcon: ({ color, size }) => <Feather name="users" color={color} size={size} />
+        }} 
+      />
+      <Tab.Screen 
+        name="Perfil" 
+        component={Perfil} 
+        options={{
+          tabBarIcon: ({ color, size }) => <Feather name="settings" color={color} size={size} />
+        }} 
+      />
+    </Tab.Navigator>
+  );
+};
 
 const HomeTabs = () => {
   return (
@@ -46,7 +82,7 @@ const HomeTabs = () => {
       name="Perfil" 
       component={Perfil}
       options={{
-        tabBarIcon: ({color, size}) => <Feather name="user" color={color} size={size}/>
+        tabBarIcon: ({color, size}) => <Feather name="settings" color={color} size={size}/>
       }}  
       />
     </Tab.Navigator>
@@ -86,7 +122,7 @@ export default function App() {
         />
         <Stack.Screen
           name="HomePsic"
-          component={HomePsic}
+          component={PsicTabs}
           options={{ title: 'HomePsic', headerBackVisible: false, }}
         />
         <Stack.Screen

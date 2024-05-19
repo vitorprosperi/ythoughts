@@ -53,6 +53,7 @@ export function Cadastro() {
                 await setDoc(doc(db, "psicologos", userID), psychologistData);
             } else {
                 const userData = {
+                    codigo: userID,
                     nome: nome,
                     idade: idade,
                     email: email,

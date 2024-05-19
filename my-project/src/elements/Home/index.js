@@ -115,7 +115,7 @@ export default function Home() {
       </View>
       <CustomActionSheet
         visible={actionSheetVisible}
-        options={['Apagar', 'Cancelar']}
+        options={['Compartilhar', 'Apagar', 'Cancelar']}
         onSelect={handleActionSheetSelect}
         onCancel={() => setActionSheetVisible(false)}
       />

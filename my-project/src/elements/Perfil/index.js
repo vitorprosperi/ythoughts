@@ -60,6 +60,9 @@ export default function Perfil() {
                     <TouchableOpacity style={styles.dados} onPress={handleEditPress}>
                         <Text style={styles.dadostext}>Idade: {userData.idade}</Text>
                     </TouchableOpacity>
+                    <TouchableOpacity style={styles.dados} onPress={handleEditPress}>
+                        <Text style={styles.dadostext}>Seu Código: {userData.codigo}</Text>
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={() => navigation.navigate('Questionario')}>
                         <Text style={styles.dadostext}>Refazer Questionário</Text>
                     </TouchableOpacity>
