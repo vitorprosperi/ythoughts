@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, RefreshControl, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { auth, db } from '../../../Firebase/FirebaseConnection';
-import { collection, doc, getDocs, deleteDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, deleteDoc, setDoc, getDoc } from 'firebase/firestore';
 import { FontAwesome } from '@expo/vector-icons';
 import CustomActionSheet from '../../CustomActionSheet';
 
@@ -59,12 +59,61 @@ export default function Home() {
     setActionSheetVisible(true);
   };
 
-  const handleActionSheetSelect = (index) => {
+  const handleActionSheetSelect = async (index) => {
     if (index === 0) {
+      await handleShare(selectedAnotacaoId);
+    } else if (index === 1) {
       handleDelete(selectedAnotacaoId);
     }
     setSelectedAnotacaoId(null);
     setActionSheetVisible(false);
+  };
+
+  const handleShare = async (id) => {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        console.error('Usuário não autenticado.');
+        return;
+      }
+
+      const userID = user.uid;
+      const userDocRef = doc(db, 'usuarios', userID);
+      const anotacaoDocRef = doc(userDocRef, 'anotacoes', id);
+      const anotacaoSnapshot = await getDoc(anotacaoDocRef);
+
+      if (anotacaoSnapshot.exists()) {
+        const anotacaoData = anotacaoSnapshot.data();
+
+        // Recuperar a lista de psicólogos do paciente
+        const pacienteDocRef = doc(db, 'usuarios', userID);
+        const pacienteDocSnapshot = await getDoc(pacienteDocRef);
+
+        if (pacienteDocSnapshot.exists()) {
+          const pacienteData = pacienteDocSnapshot.data();
+          const psicologos = pacienteData.psicologos;
+
+          if (psicologos && psicologos.length > 0) {
+            // Para simplicidade, vamos compartilhar com o primeiro psicólogo da lista
+            const psicologoId = psicologos[0];
+            const psicologoDocRef = doc(db, 'psicologos', psicologoId);
+            const anotacaoCompartilhadaDocRef = doc(psicologoDocRef, 'anotacoes', id);
+
+            await setDoc(anotacaoCompartilhadaDocRef, anotacaoData);
+            Alert.alert('Anotação compartilhada com sucesso!');
+          } else {
+            Alert.alert('Nenhum psicólogo associado encontrado.');
+          }
+        } else {
+          Alert.alert('Erro ao recuperar dados do paciente.');
+        }
+      } else {
+        Alert.alert('Anotação não encontrada.');
+      }
+    } catch (error) {
+      console.error('Erro ao compartilhar anotação:', error);
+      Alert.alert('Erro ao compartilhar anotação:', error.message);
+    }
   };
 
   const handleDelete = async (id) => {

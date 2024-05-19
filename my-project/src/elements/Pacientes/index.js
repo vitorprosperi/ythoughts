@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, FlatList, Modal } from 'react-native';
 import { auth, db } from '../../../Firebase/FirebaseConnection'; // Ajuste o caminho conforme necessário
 import { doc, setDoc, getDoc, collection, getDocs, deleteDoc } from 'firebase/firestore';
-import CustomActionSheet from '../../CustomActionSheet';
 
 export default function Pacientes() {
   const [codigoPaciente, setCodigoPaciente] = useState('');
@@ -43,37 +42,37 @@ export default function Pacientes() {
       Alert.alert('Por favor, insira o código do paciente.');
       return;
     }
-    
+
     try {
       const user = auth.currentUser;
       if (!user) {
         Alert.alert('Usuário não autenticado.');
         return;
       }
-    
+
       const userID = user.uid;
       const pacienteDocRef = doc(db, 'usuarios', codigoPaciente);
-    
-      // Cria um documento para o paciente
-      const pacienteData = {
-        // Adicione aqui os dados relevantes do paciente
-      };
-    
-      await setDoc(pacienteDocRef, pacienteData);
-    
+
+      // Busca os dados do paciente existente
+      const pacienteDoc = await getDoc(pacienteDocRef);
+      if (!pacienteDoc.exists()) {
+        Alert.alert('Paciente não encontrado.');
+        return;
+      }
+
+      const pacienteData = pacienteDoc.data();
+
+      // Cria um subdocumento chamado 'pacientes' dentro da coleção do psicólogo
+      const psicologoPacienteDocRef = doc(db, `psicologos/${userID}/pacientes`, codigoPaciente);
+      await setDoc(psicologoPacienteDocRef, pacienteData);
+
       // Cria um subdocumento chamado 'psicologo' dentro do documento do paciente
-      const psicologoData = {
-        nome: user.displayName,
-        email: user.email,
-        // Outros dados relevantes do psicólogo
-      };
-    
-      await setDoc(doc(pacienteDocRef, 'psicologo', userID), psicologoData);
-    
-      // Adiciona o paciente à lista de pacientes do psicólogo
-      const psicologoDocRef = doc(db, 'psicologos', userID);
-      await setDoc(doc(psicologoDocRef, 'pacientes', codigoPaciente), pacienteData);
-    
+      const psicologoSubDocRef = doc(pacienteDocRef, 'psicologo', userID);
+      await setDoc(psicologoSubDocRef, {
+        psicologoUID: userID,
+        timestamp: new Date(),
+      });
+
       Alert.alert('Paciente adicionado com sucesso!');
       setCodigoPaciente('');
       fetchPacientes(); // Atualiza a lista de pacientes
@@ -138,37 +137,37 @@ export default function Pacientes() {
         keyExtractor={item => item.id}
       />
 
-<Modal
-  visible={modalVisible}
-  transparent={true}
-  animationType="slide"
-  onRequestClose={() => setModalVisible(false)}
->
-  <View style={styles.modalOverlay}>
-    <View style={styles.modalContainer}>
-      {selectedPaciente && (
-        <>
-          <Text style={styles.modalTitle}>Detalhes do Paciente</Text>
-          <Text style={styles.modalText}>Nome: {selectedPaciente.nome}</Text>
-          <Text style={styles.modalText}>Email: {selectedPaciente.email}</Text>
-          <Text style={styles.modalText}>Idade: {selectedPaciente.idade}</Text>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => setModalVisible(false)}
-          >
-            <Text style={styles.buttonText}>Fechar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.deleteButton}
-            onPress={() => handleDeletePaciente(selectedPaciente.id)}
-          >
-            <Text style={styles.buttonText}>Excluir Paciente</Text>
-          </TouchableOpacity>
-        </>
-      )}
-    </View>
-  </View>
-</Modal>
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            {selectedPaciente && (
+              <>
+                <Text style={styles.modalTitle}>Detalhes do Paciente</Text>
+                <Text style={styles.modalText}>Nome: {selectedPaciente.nome}</Text>
+                <Text style={styles.modalText}>Email: {selectedPaciente.email}</Text>
+                <Text style={styles.modalText}>Idade: {selectedPaciente.idade}</Text>
+                <TouchableOpacity
+                  style={styles.closeButton}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text style={styles.buttonText}>Fechar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.deleteButton}
+                  onPress={() => handleDeletePaciente(selectedPaciente.id)}
+                >
+                  <Text style={styles.buttonText}>Excluir Paciente</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -258,10 +257,10 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     marginTop: 10,
-    backgroundColor: 'red', // Altere a cor conforme necessário
+    backgroundColor: 'red',
     padding: 10,
     borderRadius: 4,
     alignItems: 'center',
     width: '100%',
-},
+  },
 });
