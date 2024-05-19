@@ -38,7 +38,7 @@ export default function HomePsic() {
 
   const handlePacientePress = (paciente) => {
     // Navegue para a tela do paciente com base no id do paciente
-    navigation.navigate('AnotaçõesPaciente', { pacienteId: paciente.id });
+    navigation.navigate('AnotacoesPaciente', { pacienteId: paciente.id });
   };
 
   return (

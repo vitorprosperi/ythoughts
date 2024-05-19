@@ -107,17 +107,18 @@ export default function Home() {
         console.error('Usuário não autenticado.');
         return;
       }
-
+  
       const userID = user.uid;
       const userDocRef = doc(db, 'usuarios', userID);
       const anotacaoDocRef = doc(userDocRef, 'anotacoes', selectedAnotacaoId);
       const anotacaoSnapshot = await getDoc(anotacaoDocRef);
-
+  
       if (anotacaoSnapshot.exists()) {
         const anotacaoData = anotacaoSnapshot.data();
-        const psicologoDocRef = doc(db, 'psicologos', psicologo.id);
-        const anotacaoCompartilhadaDocRef = doc(psicologoDocRef, 'anotacoes', selectedAnotacaoId);
-
+        const pacienteDocRef = doc(db, 'psicologos', psicologo.id, 'pacientes', userID);
+        const anotacoesCollectionRef = collection(pacienteDocRef, 'anotacoes');
+        const anotacaoCompartilhadaDocRef = doc(anotacoesCollectionRef, selectedAnotacaoId);
+  
         await setDoc(anotacaoCompartilhadaDocRef, anotacaoData);
         Alert.alert('Anotação compartilhada com sucesso!');
       } else {

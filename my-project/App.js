@@ -15,6 +15,7 @@ import Perfil from './src/elements/Perfil';
 import { Feather } from '@expo/vector-icons';
 import HomePsic from './src/elements/homepsic';
 import Pacientes from './src/elements/Pacientes';
+import AnotacoesPaciente from './src/elements/AnotaçõesPac';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -124,6 +125,11 @@ export default function App() {
           name="HomePsic"
           component={PsicTabs}
           options={{ title: 'HomePsic', headerBackVisible: false, }}
+        />
+        <Stack.Screen
+          name="AnotacoesPaciente"
+          component={AnotacoesPaciente}
+          options={{ title: 'Registros' }}
         />
         <Stack.Screen
           name="Home"
