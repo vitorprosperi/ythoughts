@@ -41,8 +41,7 @@ export default function Perfil() {
     };
 
     const handleEditPress = () => {
-        // Adicione aqui a navegação para a tela de edição do perfil
-        // Por exemplo: navigation.navigate('EditarPerfil', { userData });
+        // Mudar
     };
 
     return (

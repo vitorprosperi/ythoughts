@@ -262,24 +262,25 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     botao: {
-        backgroundColor: '#3498db',
+        backgroundColor: 'green',
         padding: 10,
-        borderRadius: 5,
-        width: '18%', // Alterado para 18% para acomodar 5 botões na mesma linha
+        borderRadius: 20,
+        width: '18%',
         alignItems: 'center',
     },
     botaoPressionado: {
-        backgroundColor: '#2980b9',
+        backgroundColor: 'red',
     },
     botaoTexto: {
         color: '#fff',
         fontWeight: 'bold',
     },
     buttonEnviar: {
-        backgroundColor: '#2ecc71',
-        padding: 10,
-        borderRadius: 5,
-        marginTop: 20,
+        backgroundColor: 'green',
+        padding: 13,
+        borderRadius: 30,
+        marginTop: 14,
+        marginBottom: 10,
         width: '100%',
         alignItems: 'center',
     },
