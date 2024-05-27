@@ -16,6 +16,7 @@ import { Feather } from '@expo/vector-icons';
 import HomePsic from './src/elements/homepsic';
 import Pacientes from './src/elements/Pacientes';
 import AnotacoesPaciente from './src/elements/AnotaçõesPac';
+import DicasPsic from './src/elements/DicasPsic';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -32,7 +33,7 @@ const PsicTabs = () => {
       />
       <Tab.Screen 
         name="Dicas" 
-        component={Result} 
+        component={DicasPsic} 
         options={{
           tabBarIcon: ({ color, size }) => <Feather name="anchor" color={color} size={size} />
         }} 

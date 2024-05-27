@@ -105,7 +105,9 @@ export default function Lugares() {
                     ))}
                 </MapView>
             ) : (
-                <Text style={styles.text}>Carregando mapa...</Text>
+                <View style={styles.loadingContainer}>
+                    <Text style={styles.loadingText}>Carregando mapa...</Text>
+                </View>
             )}
         </View>
     );
@@ -118,8 +120,12 @@ const styles = StyleSheet.create({
     map: {
         flex: 1,
     },
-    text:{
-        alignItems: "center",
-        flexDirection: 'row',
-    }
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    loadingText: {
+        fontSize: 18,
+    },
 });

@@ -62,9 +62,6 @@ export default function Perfil() {
                     <TouchableOpacity style={styles.dados} onPress={handleEditPress}>
                         <Text style={styles.dadostext}>Seu Código: {userData.codigo}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('Questionario')}>
-                        <Text style={styles.dadostext}>Refazer Questionário</Text>
-                    </TouchableOpacity>
                 </View>
             )}
             <TouchableOpacity style={styles.buttonSignOut} onPress={handleLogout}>
