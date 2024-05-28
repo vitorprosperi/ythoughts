@@ -221,7 +221,7 @@ export function Questionario() {
                             </TouchableOpacity>
                         ))}
                     </View>
-                    <Text>{perguntaIndex + 10}: {pergunta.perg10}</Text>
+                    <Text>{perguntaIndex + 10}: {pergunta.perg91}</Text>
                     <View style={styles.botaoContainer}>
                         {[...Array(5)].map((_, numero) => (
                             <TouchableOpacity

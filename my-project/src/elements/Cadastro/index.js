@@ -53,7 +53,6 @@ export function Cadastro() {
                 await setDoc(doc(db, "psicologos", userID), psychologistData);
             } else {
                 const userData = {
-                    codigo: userID,
                     nome: nome,
                     idade: idade,
                     email: email,
@@ -65,7 +64,6 @@ export function Cadastro() {
 
             console.log("Usuário cadastrado com sucesso! UID:", userID);
             console.log("Dados enviados com sucesso para o Firestore!");
-            Alert.alert('Cadastrado com sucesso!\nVoltando ao Login...');
             navigation.navigate('Login');
         } catch (error) {
             console.log('Erro ao cadastrar usuário:', error.message);

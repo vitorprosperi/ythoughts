@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, RefreshControl } from 'react-native';
 import { auth, db } from '../../../Firebase/FirebaseConnection';
 import { collection, getDocs } from 'firebase/firestore';
 
@@ -7,6 +7,7 @@ export default function AnotacoesPaciente() {
   const [anotacoes, setAnotacoes] = useState([]);
   const [pacientes, setPacientes] = useState([]);
   const [pacienteSelecionado, setPacienteSelecionado] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchPacientes();
@@ -74,8 +75,21 @@ export default function AnotacoesPaciente() {
     setAnotacoes([]);  // Limpa as anotações anteriores quando um novo paciente é selecionado
   };
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchPacientes();
+    if (pacienteSelecionado) {
+      await fetchAnotacoesDoPaciente();
+    }
+    setRefreshing(false);
+  };
+
   return (
-    <ScrollView>
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View style={styles.container}>
         {/* Renderizar a lista de pacientes como TouchableOpacity */}
         {pacientes.map(paciente => (
@@ -109,6 +123,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: "white",
   },
   pacienteItem: {
     padding: 15,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert } from "react-native";
+import { Text, View, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert, RefreshControl } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { auth, db } from "../../../Firebase/FirebaseConnection";
 import { collection, getDocs, setDoc, doc } from "firebase/firestore";
@@ -9,6 +9,7 @@ export default function DicasPsic() {
   const [pacientes, setPacientes] = useState([]);
   const [selectedPacienteId, setSelectedPacienteId] = useState(null);
   const [inputText, setInputText] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchPacientes();
@@ -70,8 +71,19 @@ export default function DicasPsic() {
     }
   };
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchPacientes();
+    setRefreshing(false);
+  };
+
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View style={styles.content}>
         {pacientes.map(paciente => (
           <View key={paciente.id} style={styles.pacienteContainer}>

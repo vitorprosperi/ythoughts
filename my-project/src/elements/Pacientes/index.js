@@ -4,7 +4,7 @@ import { auth, db } from '../../../Firebase/FirebaseConnection'; // Ajuste o cam
 import { doc, setDoc, getDoc, collection, getDocs, deleteDoc } from 'firebase/firestore';
 
 export default function Pacientes() {
-  const [codigoPaciente, setCodigoPaciente] = useState('');
+  const [emailPaciente, setEmailPaciente] = useState('');
   const [pacientes, setPacientes] = useState([]);
   const [selectedPaciente, setSelectedPaciente] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -37,9 +37,27 @@ export default function Pacientes() {
     }
   };
 
+  const fetchPacienteUIDByEmail = async (email) => {
+    try {
+      const usuariosCollectionRef = collection(db, 'usuarios');
+      const querySnapshot = await getDocs(usuariosCollectionRef);
+
+      for (const docSnapshot of querySnapshot.docs) {
+        const userData = docSnapshot.data();
+        if (userData.email === email) {
+          return docSnapshot.id;
+        }
+      }
+      return null;
+    } catch (error) {
+      console.error('Erro ao buscar UID do paciente pelo email:', error.message);
+      Alert.alert('Erro ao buscar UID do paciente pelo email:', error.message);
+    }
+  };
+
   const handleAddPaciente = async () => {
-    if (codigoPaciente.trim() === '') {
-      Alert.alert('Por favor, insira o código do paciente.');
+    if (emailPaciente.trim() === '') {
+      Alert.alert('Por favor, insira o email do paciente.');
       return;
     }
 
@@ -61,9 +79,16 @@ export default function Pacientes() {
       }
 
       const psicologoData = psicologoDoc.data();
-      const { nome, email } = psicologoData;
+      const { nome, email: psicologoEmail } = psicologoData;
 
-      const pacienteDocRef = doc(db, 'usuarios', codigoPaciente);
+      // Busca o UID do paciente pelo email
+      const pacienteUID = await fetchPacienteUIDByEmail(emailPaciente);
+      if (!pacienteUID) {
+        Alert.alert('Paciente não encontrado.');
+        return;
+      }
+
+      const pacienteDocRef = doc(db, 'usuarios', pacienteUID);
 
       // Busca os dados do paciente existente
       const pacienteDoc = await getDoc(pacienteDocRef);
@@ -75,18 +100,18 @@ export default function Pacientes() {
       const pacienteData = pacienteDoc.data();
 
       // Cria um subdocumento chamado 'pacientes' dentro da coleção do psicólogo
-      const psicologoPacienteDocRef = doc(db, `psicologos/${userID}/pacientes`, codigoPaciente);
+      const psicologoPacienteDocRef = doc(db, `psicologos/${userID}/pacientes`, pacienteUID);
       await setDoc(psicologoPacienteDocRef, pacienteData);
 
       // Cria um subdocumento chamado 'psicologo' dentro do documento do paciente
       const psicologoSubDocRef = doc(pacienteDocRef, 'psicologo', userID);
       await setDoc(psicologoSubDocRef, {
         nome: nome,
-        email: email,
+        email: psicologoEmail,
       });
 
       Alert.alert('Paciente adicionado com sucesso!');
-      setCodigoPaciente('');
+      setEmailPaciente('');
       fetchPacientes(); // Atualiza a lista de pacientes
     } catch (error) {
       console.error('Erro ao adicionar paciente:', error.message);
@@ -134,9 +159,9 @@ export default function Pacientes() {
       <Text style={styles.label}>Adicionar Paciente</Text>
       <TextInput
         style={styles.input}
-        placeholder="Código do Paciente"
-        value={codigoPaciente}
-        onChangeText={setCodigoPaciente}
+        placeholder="Email do Paciente"
+        value={emailPaciente}
+        onChangeText={setEmailPaciente}
       />
       <TouchableOpacity style={styles.button} onPress={handleAddPaciente}>
         <Text style={styles.buttonText}>Adicionar</Text>
@@ -190,6 +215,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
+    backgroundColor: "white",
   },
   label: {
     fontSize: 24,

@@ -59,9 +59,6 @@ export default function Perfil() {
                     <TouchableOpacity style={styles.dados} onPress={handleEditPress}>
                         <Text style={styles.dadostext}>Idade: {userData.idade}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.dados} onPress={handleEditPress}>
-                        <Text style={styles.dadostext}>Seu Código: {userData.codigo}</Text>
-                    </TouchableOpacity>
                 </View>
             )}
             <TouchableOpacity style={styles.buttonSignOut} onPress={handleLogout}>

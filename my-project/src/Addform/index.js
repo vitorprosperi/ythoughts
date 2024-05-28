@@ -5,15 +5,14 @@ import { useNavigation } from "@react-navigation/native";
 import { View, Text, TextInput, Alert, TouchableOpacity, StyleSheet } from "react-native";
 import { useState } from "react";
 
-export function Addform(){
-
+export function Addform() {
     const dataAtual = new Date();
     const dia = dataAtual.getDate();
     const mes = dataAtual.getMonth() + 1; // Os meses são indexados de 0 a 11, então adicionamos 1 para obter o mês correto
     const ano = dataAtual.getFullYear();
     
     const dataFormatada = `${dia}/${mes}/${ano}`;    
-const navigation = useNavigation();
+    const navigation = useNavigation();
     const [anotacao, setAnotacao] = useState(''); // Estado para armazenar a anotação digitada pelo usuário
 
     const enviarAnotacaoFirestore = async () => {
@@ -48,20 +47,12 @@ const navigation = useNavigation();
     };
 
     return (
-        <View style={{ flex: 1, padding: 20 }}>
+        <View style={styles.container}>
             <TextInput
                 placeholder="Querido Diário..."
                 value={anotacao}
                 onChangeText={setAnotacao} // Atualiza o estado anotacao com o texto digitado pelo usuário
-                style={{
-                    borderWidth: 1,
-                    borderColor: 'gray',
-                    borderRadius: 5,
-                    paddingHorizontal: 10,
-                    paddingVertical: 5,
-                    height: '80%',
-                    textAlignVertical: 'top', // Alinha o texto na parte superior
-                }}
+                style={styles.textInput}
                 multiline={true}
             />
             <TouchableOpacity style={styles.button} onPress={enviarAnotacaoFirestore}>
@@ -72,20 +63,32 @@ const navigation = useNavigation();
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: 'white', // Define o fundo da tela como branco
+    },
+    textInput: {
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        height: '80%',
+        textAlignVertical: 'top', // Alinha o texto na parte superior
+    },
     button: {
-    backgroundColor: 'green',
-    padding: 13,
-    borderRadius: 30,
-    marginTop: 14,
-    marginBottom: 10,
-    width: '100%',
-    alignItems: 'center',
+        backgroundColor: 'green',
+        padding: 13,
+        borderRadius: 30,
+        marginTop: 14,
+        marginBottom: 10,
+        width: '100%',
+        alignItems: 'center',
     },
     buttonText: {
-      color: 'white',
-      fontSize: 18 ,
-      fontWeight: 'bold',
+        color: 'white',
+        fontSize: 18,
+        fontWeight: 'bold',
     },
-  });
-  
-  
+});

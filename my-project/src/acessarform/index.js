@@ -31,36 +31,47 @@ export default function AcessarAnotacao({ route }) {
     };
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={styles.container}>
             <TextInput
-                style={{ 
-                    borderWidth: 1,
-                    borderColor: 'gray',
-                    borderRadius: 5,
-                    paddingHorizontal: 10,
-                    paddingVertical: 5,
-                    margin: 20,
-                    height: '80%',
-                    textAlignVertical: 'top', // Alinha o texto na parte superior
-                }}
+                style={styles.textInput}
                 multiline={true}
                 value={novoTexto} // Define o valor do TextInput como o texto da anotação
-                onChangeText={(text) => {
-                setNovoTexto(text); // Atualiza o estado novoTexto conforme o usuário digita
-                }}
+                onChangeText={(text) => setNovoTexto(text)} // Atualiza o estado novoTexto conforme o usuário digita
             />
             <TouchableOpacity
-                style={{
-                    backgroundColor: 'green',
-                    padding: 10,
-                    alignItems: 'center',
-                    borderRadius: 5,
-                    margin: 20,
-                }}
+                style={styles.button}
                 onPress={atualizarform}
             >
-                <Text style={{ color: 'white', fontSize: 16 }}>Salvar</Text>
+                <Text style={styles.buttonText}>Salvar</Text>
             </TouchableOpacity>
         </View>
     );
-}    
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: 'white', // Define o fundo da tela como branco
+    },
+    textInput: {
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        margin: 20,
+        height: '60%',
+        textAlignVertical: 'top', // Alinha o texto na parte superior
+    },
+    button: {
+        backgroundColor: 'green',
+        padding: 10,
+        alignItems: 'center',
+        borderRadius: 30,
+        margin: 20,
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 16,
+    },
+});
