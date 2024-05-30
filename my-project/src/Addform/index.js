@@ -1,46 +1,75 @@
-import React from "react";
-import { db, auth } from "../../Firebase/FirebaseConnection";
-import { collection, addDoc, doc } from "firebase/firestore";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, Alert, TouchableOpacity, StyleSheet } from "react-native";
-import { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { db, auth } from "../../Firebase/FirebaseConnection";
+import { getDoc, doc, collection, addDoc } from "firebase/firestore";
+import { Picker } from '@react-native-picker/picker';
 
 export function Addform() {
     const dataAtual = new Date();
     const dia = dataAtual.getDate();
-    const mes = dataAtual.getMonth() + 1; // Os meses são indexados de 0 a 11, então adicionamos 1 para obter o mês correto
+    const mes = dataAtual.getMonth() + 1;
     const ano = dataAtual.getFullYear();
-    
-    const dataFormatada = `${dia}/${mes}/${ano}`;    
+    const dataFormatada = `${dia}/${mes}/${ano}`;
+
     const navigation = useNavigation();
-    const [anotacao, setAnotacao] = useState(''); // Estado para armazenar a anotação digitada pelo usuário
+    const [anotacao, setAnotacao] = useState('');
+    const [selectedEmotion, setSelectedEmotion] = useState('');
+    const [emotions, setEmotions] = useState([]);
+
+    useEffect(() => {
+        fetchEmotions();
+    }, []);
+
+    const fetchEmotions = async () => {
+        try {
+            const emotionsDocRef = doc(db, 'emocao', 'jUzo1MKnoYnzsuxi1pEm');
+            const docSnapshot = await getDoc(emotionsDocRef);
+
+            if (docSnapshot.exists()) {
+                const data = docSnapshot.data();
+                console.log('Emoções:', data);
+                setEmotions([
+                    data.emocao1,
+                    data.emocao2,
+                    data.emocao3,
+                    data.emocao4,
+                ]);
+            } else {
+                console.error('Documento de emoções não encontrado');
+                Alert.alert('Erro', 'Documento de emoções não encontrado');
+            }
+        } catch (error) {
+            console.error('Erro ao buscar emoções:', error.message);
+            Alert.alert('Erro ao buscar emoções:', error.message);
+        }
+    };
 
     const enviarAnotacaoFirestore = async () => {
         try {
-            // Verifique se o usuário está autenticado
-            const user = auth.currentUser; // Obtenha o usuário autenticado
+            const user = auth.currentUser;
             if (!user) {
                 console.error('Usuário não autenticado.');
                 return;
             }
 
-            const userID = user.uid; // Obtenha o UID do usuário autenticado
-
-            // Adiciona a anotação como um novo documento na coleção "anotacoes" dentro do documento do usuário
+            const userID = user.uid;
             const userDocRef = doc(db, 'usuarios', userID);
             const anotacoesCollectionRef = collection(userDocRef, 'anotacoes');
-            
-            // Adiciona a anotação ao Firestore
+
             const docRef = await addDoc(anotacoesCollectionRef, {
-                anotacao: anotacao, // Conteúdo da anotação
-                data: dataFormatada
+                anotacao: anotacao,
+                emocao: selectedEmotion,
+                data: dataFormatada,
             });
-            
+
             console.log('Anotação enviada com ID:', docRef.id);
-            console.log('Anotação:', anotacao); // Exibe a anotação no console
+            console.log('Anotação:', anotacao);
 
             console.log('Anotação enviada com sucesso!');
             Alert.alert('Salvo!');
+            setAnotacao('');
+            setSelectedEmotion('');
         } catch (error) {
             console.error('Erro ao enviar anotação:', error);
         }
@@ -51,10 +80,26 @@ export function Addform() {
             <TextInput
                 placeholder="Querido Diário..."
                 value={anotacao}
-                onChangeText={setAnotacao} // Atualiza o estado anotacao com o texto digitado pelo usuário
+                onChangeText={setAnotacao}
                 style={styles.textInput}
                 multiline={true}
             />
+            <Picker
+                selectedValue={selectedEmotion}
+                style={styles.picker}
+                onValueChange={(itemValue) => setSelectedEmotion(itemValue)}
+            >
+                <Picker.Item label="Selecione uma emoção" value="" />
+                {emotions.map((emotion, index) => {
+                    if (emotion) {
+                        console.log(`Emotion ${index + 1}: ${emotion}`); // Log para verificar cada emoção
+                        return <Picker.Item key={index} label={emotion} value={emotion} />;
+                    } else {
+                        console.log(`Emotion ${index + 1} está vazio ou undefined`); // Log para verificar emoções vazias
+                        return <Picker.Item key={index} label={`Emoção ${index + 1}`} value={`Emoção ${index + 1}`} />;
+                    }
+                })}
+            </Picker>
             <TouchableOpacity style={styles.button} onPress={enviarAnotacaoFirestore}>
                 <Text style={styles.buttonText}>Salvar</Text>
             </TouchableOpacity>
@@ -66,7 +111,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: 'white', // Define o fundo da tela como branco
+        backgroundColor: 'white',
     },
     textInput: {
         borderWidth: 1,
@@ -74,8 +119,20 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         paddingHorizontal: 10,
         paddingVertical: 5,
-        height: '80%',
-        textAlignVertical: 'top', // Alinha o texto na parte superior
+        height: '50%',
+        textAlignVertical: 'top',
+    },
+    picker: {
+        height: 50,
+        width: '100%',
+        marginTop: 10,
+        borderWidth: 1,
+        borderColor: 'green',
+        borderRadius: 5,
+    },
+    pickerItem: {
+        fontSize: 16,
+        color:'green',
     },
     button: {
         backgroundColor: 'green',
