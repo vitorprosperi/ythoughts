@@ -89,16 +89,15 @@ export function Addform() {
                 style={styles.picker}
                 onValueChange={(itemValue) => setSelectedEmotion(itemValue)}
             >
-                <Picker.Item label="Selecione uma emoção" value="" />
-                {emotions.map((emotion, index) => {
-                    if (emotion) {
-                        console.log(`Emotion ${index + 1}: ${emotion}`); // Log para verificar cada emoção
-                        return <Picker.Item key={index} label={emotion} value={emotion} />;
-                    } else {
-                        console.log(`Emotion ${index + 1} está vazio ou undefined`); // Log para verificar emoções vazias
-                        return <Picker.Item key={index} label={`Emoção ${index + 1}`} value={`Emoção ${index + 1}`} />;
-                    }
-                })}
+                <Picker.Item label="Selecione uma emoção" value="" style={styles.pickerItem} />
+                {emotions.map((emotion, index) => (
+                    <Picker.Item 
+                        key={index} 
+                        label={emotion} 
+                        value={emotion} 
+                        style={styles.pickerItem} // Aplicando estilo diretamente
+                    />
+                ))}
             </Picker>
             <TouchableOpacity style={styles.button} onPress={enviarAnotacaoFirestore}>
                 <Text style={styles.buttonText}>Salvar</Text>
@@ -126,13 +125,11 @@ const styles = StyleSheet.create({
         height: 50,
         width: '100%',
         marginTop: 10,
-        borderWidth: 1,
-        borderColor: 'green',
-        borderRadius: 5,
+        backgroundColor: 'white',
     },
     pickerItem: {
         fontSize: 16,
-        color:'green',
+        color: 'black', // Cor do texto para garantir que seja visível
     },
     button: {
         backgroundColor: 'green',

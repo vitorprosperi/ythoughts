@@ -1,12 +1,42 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { TextInput, StyleSheet, TouchableOpacity, View, Text, Alert } from "react-native";
-import { useState } from "react";
 import { auth, db } from "../../Firebase/FirebaseConnection";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { Picker } from '@react-native-picker/picker';
 
 export default function AcessarAnotacao({ route }) {
     const { anotacaoTexto, id } = route.params; // Obtém o texto da anotação passado como parâmetro
     const [novoTexto, setNovoTexto] = useState(anotacaoTexto);
+    const [selectedEmotion, setSelectedEmotion] = useState('');
+    const [emotions, setEmotions] = useState([]);
+
+    useEffect(() => {
+        fetchEmotions();
+    }, []);
+
+    const fetchEmotions = async () => {
+        try {
+            const emotionsDocRef = doc(db, 'emocao', 'jUzo1MKnoYnzsuxi1pEm');
+            const docSnapshot = await getDoc(emotionsDocRef);
+
+            if (docSnapshot.exists()) {
+                const data = docSnapshot.data();
+                console.log('Emoções:', data);
+                setEmotions([
+                    data.emocao1,
+                    data.emocao2,
+                    data.emocao3,
+                    data.emocao4,
+                ]);
+            } else {
+                console.error('Documento de emoções não encontrado');
+                Alert.alert('Erro', 'Documento de emoções não encontrado');
+            }
+        } catch (error) {
+            console.error('Erro ao buscar emoções:', error.message);
+            Alert.alert('Erro ao buscar emoções:', error.message);
+        }
+    };
 
     const atualizarform = async () => {
         try {
@@ -20,8 +50,11 @@ export default function AcessarAnotacao({ route }) {
             const userDocRef = doc(db, 'usuarios', userID); // Referência ao documento do usuário
             const anotacaoDocRef = doc(userDocRef, 'anotacoes', id); // Referência à anotação específica
 
-            // Atualiza o documento da anotação no Firestore com o novo texto
-            await setDoc(anotacaoDocRef, { anotacao: novoTexto }, { merge: true });
+            // Atualiza o documento da anotação no Firestore com o novo texto e emoção selecionada
+            await setDoc(anotacaoDocRef, { 
+                anotacao: novoTexto,
+                emocao: selectedEmotion
+            }, { merge: true });
 
             console.log('Anotação atualizada com sucesso!');
             Alert.alert("Salvo com sucesso!");
@@ -38,6 +71,21 @@ export default function AcessarAnotacao({ route }) {
                 value={novoTexto} // Define o valor do TextInput como o texto da anotação
                 onChangeText={(text) => setNovoTexto(text)} // Atualiza o estado novoTexto conforme o usuário digita
             />
+            <Picker
+                selectedValue={selectedEmotion}
+                style={styles.picker}
+                onValueChange={(itemValue) => setSelectedEmotion(itemValue)}
+            >
+                <Picker.Item label="Selecione uma emoção" value="" style={styles.pickerItem} />
+                {emotions.map((emotion, index) => (
+                    <Picker.Item 
+                        key={index} 
+                        label={emotion} 
+                        value={emotion} 
+                        style={styles.pickerItem} 
+                    />
+                ))}
+            </Picker>
             <TouchableOpacity
                 style={styles.button}
                 onPress={atualizarform}
@@ -60,8 +108,20 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 5,
         margin: 20,
-        height: '60%',
+        height: '40%',
         textAlignVertical: 'top', // Alinha o texto na parte superior
+    },
+    picker: {
+        height: 50,
+        width: '90%',
+        marginTop: 10,
+        marginLeft: 20,
+        marginRight: 20,
+        backgroundColor: 'white',
+    },
+    pickerItem: {
+        fontSize: 16,
+        color: 'black', // Cor do texto para garantir que seja visível
     },
     button: {
         backgroundColor: 'green',

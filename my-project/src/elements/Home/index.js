@@ -168,7 +168,10 @@ export default function Home() {
               onPress={() => navigation.navigate('AcessarAnotacao', { anotacaoTexto: anotacao.anotacao, id: anotacao.id })}
             >
               <View style={styles.anotacaoContainer}>
-                <Text style={styles.anotacaoText}>{anotacao.anotacao}</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.anotacaoText}>{anotacao.anotacao}</Text>
+                  <Text style={styles.emocaoText}>{anotacao.emocao}</Text>
+                </View>
                 <TouchableOpacity onPress={() => handleOptionsPress(anotacao.id)}>
                   <Text style={styles.opcoesText}>...</Text>
                 </TouchableOpacity>
@@ -249,7 +252,10 @@ const styles = StyleSheet.create({
   },
   anotacaoText: {
     fontSize: 16,
-    flex: 1,
+  },
+  emocaoText: {
+    fontSize: 14,
+    color: 'gray',
   },
   dataContainer: {
     marginRight: 10,
@@ -298,4 +304,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
