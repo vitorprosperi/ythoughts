@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet,
+   TouchableOpacity, ScrollView, Alert, RefreshControl } from 'react-native';
 import { auth, db } from '../../../Firebase/FirebaseConnection';
 import { collection, getDocs } from 'firebase/firestore';
+import { useNavigation } from '@react-navigation/native';
 
 export default function AnotacoesPaciente() {
+  const navigation = useNavigation();
   const [anotacoes, setAnotacoes] = useState([]);
   const [pacientes, setPacientes] = useState([]);
   const [pacienteSelecionado, setPacienteSelecionado] = useState(null);
@@ -84,6 +87,10 @@ export default function AnotacoesPaciente() {
     setRefreshing(false);
   };
 
+  const handleEditQuestPress = (paciente) => {
+    navigation.navigate('EditQuest', { pacienteId: paciente.id });
+  };
+
   return (
     <ScrollView
       refreshControl={
@@ -91,10 +98,14 @@ export default function AnotacoesPaciente() {
       }
     >
       <View style={styles.container}>
+        <Text style={styles.texto}>Lista de Pacientes:</Text>
         {/* Renderizar a lista de pacientes como TouchableOpacity */}
         {pacientes.map(paciente => (
           <TouchableOpacity key={paciente.id} style={styles.pacienteItem} onPress={() => handlePacientePress(paciente)}>
             <Text style={styles.pacienteText}>{paciente.nome}</Text>
+            <TouchableOpacity style={styles.remake} onPress={() => handleEditQuestPress(paciente)}>
+              <Text style={styles.remaketext}>Teste</Text>
+            </TouchableOpacity>
           </TouchableOpacity>
         ))}
 
@@ -131,8 +142,24 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
   },
+  remake: {
+    padding: 15,
+    backgroundColor: 'green',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    borderRadius: 30,
+    
+  },
+  remaketext:{
+    color: 'white',
+    fontWeight: 'bold',
+  },
   pacienteText: {
     fontSize: 18,
+  },
+  texto:{
+    fontSize: 23,
+    fontWeight: 'bold'  
   },
   anotacoesContainer: {
     marginTop: 20,

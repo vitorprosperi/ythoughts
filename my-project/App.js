@@ -18,6 +18,7 @@ import Pacientes from './src/elements/Pacientes';
 import AnotacoesPaciente from './src/elements/AnotaçõesPac';
 import DicasPsic from './src/elements/DicasPsic';
 import PerfilPsic from './src/elements/PerfilPsic';
+import EditQuest from './src/elements/EditQuest';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -149,6 +150,11 @@ export default function App() {
           name="AcessarAnotacao"
           component={AcessarAnotacao}
           options={{ title: 'Editar' }}
+        />
+        <Stack.Screen
+          name="EditQuest"
+          component={EditQuest}
+          options={{ title: 'Editar Questionário' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
