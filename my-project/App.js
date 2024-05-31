@@ -17,6 +17,7 @@ import HomePsic from './src/elements/homepsic';
 import Pacientes from './src/elements/Pacientes';
 import AnotacoesPaciente from './src/elements/AnotaçõesPac';
 import DicasPsic from './src/elements/DicasPsic';
+import PerfilPsic from './src/elements/PerfilPsic';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -47,7 +48,7 @@ const PsicTabs = () => {
       />
       <Tab.Screen 
         name="Perfil" 
-        component={Perfil} 
+        component={PerfilPsic} 
         options={{
           tabBarIcon: ({ color, size }) => <Feather name="settings" color={color} size={size} />
         }} 

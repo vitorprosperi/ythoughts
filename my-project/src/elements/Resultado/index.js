@@ -3,6 +3,8 @@ import { Text, View, StyleSheet, ScrollView, TouchableOpacity, Alert } from "rea
 import { useNavigation } from "@react-navigation/native";
 import { auth, db } from "../../../Firebase/FirebaseConnection";
 import { doc, getDoc } from "firebase/firestore";
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 export default function Result() {
   const navigation = useNavigation();
@@ -36,12 +38,49 @@ export default function Result() {
     }
   };
 
+  const handleGenerateReport = async () => {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        console.error("Usuário não autenticado.");
+        return;
+      }
+
+      const userID = user.uid;
+      const respostasDocRef = doc(db, "usuarios", userID, "respostas", "dados");
+      const respostasDoc = await getDoc(respostasDocRef);
+
+      if (respostasDoc.exists()) {
+        const respostas = respostasDoc.data();
+        const reportContent = JSON.stringify(respostas, null, 2);
+        const fileName = `${FileSystem.documentDirectory}relatorio.txt`;
+
+        await FileSystem.writeAsStringAsync(fileName, reportContent);
+        
+        if (await Sharing.isAvailableAsync()) {
+          await Sharing.shareAsync(fileName);
+        } else {
+          Alert.alert("Erro", "Compartilhamento não está disponível neste dispositivo");
+        }
+      } else {
+        console.log("Nenhuma resposta encontrada.");
+        Alert.alert("Erro", "Nenhuma resposta encontrada.");
+      }
+    } catch (error) {
+      console.error("Erro ao gerar o relatório:", error.message);
+      Alert.alert("Erro ao gerar o relatório:", error.message);
+    }
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.dicaText}>{dica}</Text>
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Questionario')}>
           <Text style={styles.buttonText}>Refazer Questionário</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleGenerateReport}>
+          <Text style={styles.buttonText}>Gerar Relatório</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

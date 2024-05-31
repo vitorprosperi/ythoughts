@@ -129,16 +129,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
-    backgroundColor: "#007BFF",
-    padding: 15,
-    borderRadius: 5,
-    width: "80%",
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 17,
-  },
+    backgroundColor: 'green',
+    padding: 13,
+    borderRadius: 30,
+    marginTop: 14,
+    marginBottom: 10,
+    width: '100%',
+    alignItems: 'center',
+},
+buttonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+},
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -159,7 +162,8 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   sendButtonText: {
-    color: "#fff",
-    fontSize: 15,
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });

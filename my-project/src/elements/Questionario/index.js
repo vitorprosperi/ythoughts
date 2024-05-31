@@ -72,7 +72,6 @@ export function Questionario() {
     
             // Atualiza as respostas na coleção 'respostas' do usuário
             const respostasData = respostas.map((resposta, index) => ({
-                perguntaIndex: index, // Adicione o índice da pergunta para referência
                 resposta: resposta, // Array com as opções selecionadas para essa pergunta
             }));
             await setDoc(doc(respostasCollectionRef, 'dados'), { respostas: respostasData }, { merge: true });
