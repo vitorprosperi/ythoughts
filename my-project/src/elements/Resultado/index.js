@@ -5,6 +5,7 @@ import { auth, db } from "../../../Firebase/FirebaseConnection";
 import { doc, getDoc } from "firebase/firestore";
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import { Questionario } from "../Questionario";
 
 export default function Result() {
   const navigation = useNavigation();
@@ -72,11 +73,20 @@ export default function Result() {
     }
   };
 
+  const handleRefazerQuestionario = () => {
+    const user = auth.currentUser;
+    if (user) {
+      navigation.navigate('QuestionarioPessoal', { userId: user.uid, questionarioId: Questionario.uid });
+    } else {
+      Alert.alert("Erro", "Usuário não autenticado.");
+    }
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.dicaText}>{dica}</Text>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('QuestionarioPessoal')}>
+        <TouchableOpacity style={styles.button} onPress={handleRefazerQuestionario}>
           <Text style={styles.buttonText}>Refazer Questionário</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handleGenerateReport}>
