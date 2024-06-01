@@ -19,6 +19,7 @@ import AnotacoesPaciente from './src/elements/AnotaçõesPac';
 import DicasPsic from './src/elements/DicasPsic';
 import PerfilPsic from './src/elements/PerfilPsic';
 import EditQuest from './src/elements/EditQuest';
+import { QuestionarioPessoal } from './src/elements/QuestionarioPessoal';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -155,6 +156,11 @@ export default function App() {
           name="EditQuest"
           component={EditQuest}
           options={{ title: 'Editar Questionário' }}
+        />
+        <Stack.Screen
+          name="QuestionarioPessoal"
+          component={QuestionarioPessoal}
+          options={{ title: 'Novo Questionário' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

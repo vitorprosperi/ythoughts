@@ -76,7 +76,7 @@ export default function Result() {
     <ScrollView style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.dicaText}>{dica}</Text>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Questionario')}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('QuestionarioPessoal')}>
           <Text style={styles.buttonText}>Refazer Questionário</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handleGenerateReport}>

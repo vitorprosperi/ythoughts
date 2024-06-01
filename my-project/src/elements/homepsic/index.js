@@ -104,7 +104,7 @@ export default function AnotacoesPaciente() {
           <TouchableOpacity key={paciente.id} style={styles.pacienteItem} onPress={() => handlePacientePress(paciente)}>
             <Text style={styles.pacienteText}>{paciente.nome}</Text>
             <TouchableOpacity style={styles.remake} onPress={() => handleEditQuestPress(paciente)}>
-              <Text style={styles.remaketext}>Teste</Text>
+              <Text style={styles.remaketext}>Alterar Questionário</Text>
             </TouchableOpacity>
           </TouchableOpacity>
         ))}
