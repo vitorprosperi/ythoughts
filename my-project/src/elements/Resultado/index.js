@@ -5,7 +5,6 @@ import { auth, db } from "../../../Firebase/FirebaseConnection";
 import { doc, getDoc } from "firebase/firestore";
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-import { Questionario } from "../Questionario";
 
 export default function Result() {
   const navigation = useNavigation();
@@ -76,7 +75,8 @@ export default function Result() {
   const handleRefazerQuestionario = () => {
     const user = auth.currentUser;
     if (user) {
-      navigation.navigate('QuestionarioPessoal', { userId: user.uid, questionarioId: Questionario.uid });
+      const questionarioId = "perguntas"; // Aqui você define o ID do questionário
+      navigation.navigate('QuestionarioPessoal', { userId: user.uid, questionarioId });
     } else {
       Alert.alert("Erro", "Usuário não autenticado.");
     }
