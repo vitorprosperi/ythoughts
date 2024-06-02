@@ -94,7 +94,7 @@ export default function EditQuest() {
                             })
                             .map((key, index) => (
                                 <View key={index} style={styles.inputContainer}>
-                                    <Text style={styles.label}>{key}:</Text>
+                                    <Text style={styles.label}>Pergunta {index + 1}:</Text>
                                     <TextInput
                                         style={styles.input}
                                         value={String(perguntas[key])} // Converte o valor para string

@@ -140,11 +140,12 @@ const styles = StyleSheet.create({
     padding: 15,
     backgroundColor: '#f9f9f9',
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: 'green',
+    borderRadius: 20,
   },
   remake: {
     padding: 15,
-    backgroundColor: 'green',
+    backgroundColor: '#b2d8d8',
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
     borderRadius: 30,
@@ -174,6 +175,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
     marginTop: 10,
+    borderRadius: 30,
   },
   anotacaoTexto: {
     fontSize: 16,

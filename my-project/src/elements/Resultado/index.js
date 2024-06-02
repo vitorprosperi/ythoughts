@@ -85,7 +85,7 @@ export default function Result() {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.dicaText}>{dica}</Text>
+        <Text style={[styles.dicaText, styles.justifyText]}>{dica}</Text>
         <TouchableOpacity style={styles.button} onPress={handleRefazerQuestionario}>
           <Text style={styles.buttonText}>Refazer Questionário</Text>
         </TouchableOpacity>
@@ -112,7 +112,9 @@ const styles = StyleSheet.create({
     fontSize: 17,
     marginTop: 50,
     marginBottom: 20,
-    textAlign: "center",
+  },
+  justifyText: {
+    textAlign: "justify",
   },
   button: {
     backgroundColor: 'green',

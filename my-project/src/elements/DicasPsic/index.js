@@ -96,7 +96,8 @@ export default function DicasPsic() {
             {selectedPacienteId === paciente.id && (
               <View style={styles.inputContainer}>
                 <TextInput
-                  style={styles.textInput}
+                  style={[styles.textInput, {height: 150}]}
+                  multiline={true}
                   placeholder="Digite sua mensagem"
                   value={inputText}
                   onChangeText={setInputText}
