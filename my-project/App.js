@@ -128,12 +128,14 @@ export default function App() {
         <Stack.Screen
           name="HomePsic"
           component={PsicTabs}
-          options={{ title: 'HomePsic', headerBackVisible: false, }}
+          options={{ title: '', headerBackVisible: false, }}
         />
         <Stack.Screen
           name="AnotacoesPaciente"
           component={AnotacoesPaciente}
-          options={{ title: 'Registros' }}
+          options={({ navigation }) => ({
+            headerShown: false
+            })}
         />
         <Stack.Screen
           name="Home"
