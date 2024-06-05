@@ -52,7 +52,8 @@ export default function Result() {
 
       if (respostasDoc.exists()) {
         const respostas = respostasDoc.data();
-        const reportContent = JSON.stringify(respostas, null, 2);
+        const fixedText = "Relatório sobre o questionário:\n\n"; // Texto fixo a ser incluído
+        const reportContent = fixedText + JSON.stringify(respostas, null, 2);
         const fileName = `${FileSystem.documentDirectory}relatorio.txt`;
 
         await FileSystem.writeAsStringAsync(fileName, reportContent);

@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
   },
   perguntaText: {
     fontSize: 17,
+    fontWeight: 'bold',
     marginBottom: 10,
     textAlign: "center",
   },
@@ -129,6 +130,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 10,
+    width: '100%',
   },
   botao: {
     backgroundColor: 'green',
@@ -136,6 +138,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     width: '18%',
     alignItems: 'center',
+    marginHorizontal: 5,
   },
   botaoPressionado: {
     backgroundColor: 'red',
