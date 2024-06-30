@@ -46,6 +46,7 @@ export default function Result() {
         return;
       }
 
+      // Recuperando as respostas para gerar o relatório
       const userID = user.uid;
       const respostasDocRef = doc(db, "usuarios", userID, "respostas", "dados");
       const respostasDoc = await getDoc(respostasDocRef);
