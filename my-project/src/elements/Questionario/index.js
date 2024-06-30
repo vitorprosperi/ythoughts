@@ -57,14 +57,14 @@ export function Questionario() {
                 return;
             }
 
-            // Referência ao subdocumento 'dados' dentro do documento 'respostas' do usuário
-            const dadosDocRef = doc(userDocRef, 'respostas', 'dados');
+            // Referência ao subdocumento 'respum' dentro do documento 'respostas' do usuário
+            const respumDocRef = doc(userDocRef, 'respostas', 'respum');
 
-            // Atualiza o campo "total" dentro do subdocumento 'dados'
+            // Atualiza o campo "total" dentro do subdocumento 'respum'
             const total = respostas.reduce((acc, resposta) => {
                 return acc + resposta.reduce((acc, opcao) => acc + opcao, 0);
             }, 0);
-            await setDoc(dadosDocRef, { total: total }, { merge: true });
+            await setDoc(respumDocRef, { total: total }, { merge: true });
 
             // Referência à coleção 'respostas' dentro do documento do usuário
             const respostasCollectionRef = collection(userDocRef, 'respostas');
@@ -73,7 +73,7 @@ export function Questionario() {
             const respostasData = respostas.map((resposta, index) => ({
                 resposta: resposta, // Array com as opções selecionadas para essa pergunta
             }));
-            await setDoc(doc(respostasCollectionRef, 'dados'), { respostas: respostasData }, { merge: true });
+            await setDoc(doc(respostasCollectionRef, 'respum'), { respostas: respostasData }, { merge: true });
 
             console.log('Respostas atualizadas com sucesso!');
             navigation.navigate('Home', { userId: user.uid });

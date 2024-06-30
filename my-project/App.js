@@ -20,6 +20,10 @@ import DicasPsic from './src/elements/DicasPsic';
 import PerfilPsic from './src/elements/PerfilPsic';
 import EditQuest from './src/elements/EditQuest';
 import { QuestionarioPessoal } from './src/elements/QuestionarioPessoal';
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs(['Warning: ...']); // Ignorar notificações de logs específicas
+LogBox.ignoreAllLogs(); // Ignorar todas as notificações de logs
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();

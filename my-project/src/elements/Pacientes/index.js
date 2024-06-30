@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, FlatList, Modal } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, FlatList, Modal, ActivityIndicator } from 'react-native';
 import { auth, db } from '../../../Firebase/FirebaseConnection'; // Ajuste o caminho conforme necessário
 import { doc, setDoc, getDoc, collection, getDocs, deleteDoc } from 'firebase/firestore';
 
@@ -8,6 +8,7 @@ export default function Pacientes() {
   const [pacientes, setPacientes] = useState([]);
   const [selectedPaciente, setSelectedPaciente] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false); // Estado de carregamento
 
   useEffect(() => {
     fetchPacientes();
@@ -60,6 +61,8 @@ export default function Pacientes() {
       Alert.alert('Por favor, insira o email do paciente.');
       return;
     }
+
+    setLoading(true); // Inicia o carregamento
 
     try {
       const user = auth.currentUser;
@@ -116,6 +119,8 @@ export default function Pacientes() {
     } catch (error) {
       console.error('Erro ao adicionar paciente:', error.message);
       Alert.alert('Erro ao adicionar paciente:', error.message);
+    } finally {
+      setLoading(false); // Finaliza o carregamento
     }
   };
 
@@ -164,7 +169,11 @@ export default function Pacientes() {
         onChangeText={setEmailPaciente}
       />
       <TouchableOpacity style={styles.button} onPress={handleAddPaciente}>
-        <Text style={styles.buttonText}>Adicionar</Text>
+        {loading ? (
+          <ActivityIndicator size="small" color="#FFF" />
+        ) : (
+          <Text style={styles.buttonText}>Adicionar</Text>
+        )}
       </TouchableOpacity>
 
       <Text style={styles.label}>Pacientes Cadastrados</Text>

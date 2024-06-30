@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Alert } from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { db } from "../../../Firebase/FirebaseConnection";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
@@ -9,6 +9,7 @@ export default function EditQuest() {
     const { pacienteId } = route.params; // Recebe o ID do paciente como parâmetro da navegação
     const [perguntas, setPerguntas] = useState({});
     const [loading, setLoading] = useState(true); // Estado de carregamento
+    const [saving, setSaving] = useState(false); // Estado de salvamento
 
     useEffect(() => {
         fetchPerguntas();
@@ -57,6 +58,7 @@ export default function EditQuest() {
     };
 
     const handleSave = async () => {
+        setSaving(true);
         try {
             console.log("Salvando perguntas no Firestore...", perguntas);
             const perguntasDocRef = doc(db, 'usuarios', pacienteId, 'questionario', 'perguntas');
@@ -72,9 +74,12 @@ export default function EditQuest() {
                 await setDoc(perguntasDocRef, { perguntas });
                 console.log("Perguntas salvas com sucesso!");
             }
+            Alert.alert("Sucesso", "Perguntas salvas com sucesso!");
         } catch (error) {
             console.error("Erro ao salvar perguntas:", error.message);
             Alert.alert("Erro ao salvar perguntas:", error.message);
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -106,9 +111,13 @@ export default function EditQuest() {
                         <Text>Nenhuma pergunta encontrada.</Text>
                     )
                 )}
-                <TouchableOpacity style={styles.button} onPress={handleSave}>
-                    <Text style={styles.buttonText}>Salvar</Text>
-                </TouchableOpacity>
+                {saving ? (
+                    <ActivityIndicator size="large" color="#0000ff" />
+                ) : (
+                    <TouchableOpacity style={styles.button} onPress={handleSave}>
+                        <Text style={styles.buttonText}>Salvar</Text>
+                    </TouchableOpacity>
+                )}
             </View>
         </ScrollView>
     );
