@@ -44,7 +44,7 @@ export default function Lugares() {
             axios.get(apiUrl, {
                 params: {
                     location: `${location.coords.latitude},${location.coords.longitude}`,
-                    radius: 5000,
+                    radius: 10000,
                     keyword: 'psicólogo,psiquiatra',
                     key: googlePlacesApiKey,
                 }
