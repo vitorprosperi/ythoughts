@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
 import { db } from "../../../Firebase/FirebaseConnection";
 import { doc, collection, getDocs, getDoc, setDoc } from "firebase/firestore";
 import { useRoute } from "@react-navigation/native";
@@ -9,6 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 export function Questionario() {
     const [perguntas, setPerguntas] = useState([]);
     const [respostas, setRespostas] = useState([]);
+    const [loading, setLoading] = useState(false); // Estado de carregamento
     const route = useRoute();
     const { user } = useAuth();
     const navigation = useNavigation();
@@ -39,6 +40,7 @@ export function Questionario() {
     };
 
     const enviarRespostasFirestore = async () => {
+        setLoading(true); // Inicia o carregamento
         try {
             // Verifique se o usuário está autenticado
             if (!user) {
@@ -79,6 +81,8 @@ export function Questionario() {
             navigation.navigate('Home', { userId: user.uid });
         } catch (error) {
             console.error('Erro ao enviar ou atualizar respostas:', error);
+        } finally {
+            setLoading(false); // Finaliza o carregamento
         }
     };
 
@@ -234,8 +238,12 @@ export function Questionario() {
                         </View>
                     </View>
                 ))}
-                <TouchableOpacity style={styles.buttonEnviar} onPress={enviarRespostasFirestore}>
-                    <Text style={styles.buttonText}>Enviar Respostas</Text>
+                <TouchableOpacity style={styles.buttonEnviar} onPress={handleEnviarRespostas} disabled={loading}>
+                    {loading ? (
+                        <ActivityIndicator size="small" color="#FFF" />
+                    ) : (
+                        <Text style={styles.buttonText}>Enviar Respostas</Text>
+                    )}
                 </TouchableOpacity>
             </View>
         </ScrollView>
